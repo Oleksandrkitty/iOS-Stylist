@@ -7,7 +7,7 @@ target 'BogoArtistApp' do
 
 # Pods for BogoArtistApp
 pod 'CarbonKit'
-pod 'CVCalendar', '~> 1.6.0'
+pod 'CVCalendar', '~> 1.6.2'
 pod 'HCSStarRatingView'
 pod 'GoogleMaps'
 pod 'GooglePlaces'

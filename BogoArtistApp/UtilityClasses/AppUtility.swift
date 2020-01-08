@@ -127,6 +127,15 @@ func removeStatusBarView(_ view: UIView) {
     APPDELEGATE.statusBarView?.removeFromSuperview()
 }
 
+func timeFromDate(_ date: String, withFormat format: String) -> String {
+    
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "HH:mm"
+    let date = dateFormatter.date(from: date)
+    dateFormatter.dateFormat = format//"hh:mm aa"
+    return dateFormatter.string(from: date!)
+}
+
 /*
      Get time with am and pm status
  */
@@ -148,7 +157,7 @@ func getTimeForMessageSend(time: String) -> String {
     
 
     let hour: Int = Int(time[0..<2])!
-    let minut: Int = Int(time[3..5])!
+    let minut: Int = Int(time[3...5])!
     if (hour + minut) == 0{
         return "\(time[0..<5])"
         

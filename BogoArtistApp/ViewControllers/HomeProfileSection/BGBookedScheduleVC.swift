@@ -207,16 +207,6 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
         return false
     }
     
-    
-    func timeFromDate(_ date:String, withFormat format:String) -> String {
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        let date = dateFormatter.date(from: date)
-        dateFormatter.dateFormat = format//"hh:mm aa"
-        return dateFormatter.string(from: date!)
-    }
-    
     //MARK:- =====================>UIButton Action Methods<=================//
     @IBAction func scheduleAction(_ sender: UIButton) {
         
