@@ -24,12 +24,12 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 4.8.2)
   - AlamofireObjectMapper (~> 5.2)
-  - CarbonKit
+  - CarbonKit (~> 2.2.2)
   - CVCalendar (~> 1.6.2)
-  - GoogleMaps
-  - GooglePlacePicker
-  - GooglePlaces
-  - HCSStarRatingView
+  - GoogleMaps (~> 2.5.0)
+  - GooglePlacePicker (~> 2.5.0)
+  - GooglePlaces (~> 2.5.0)
+  - HCSStarRatingView (~> 1.5)
   - ObjectMapper (~> 3.4)
   - PKHUD (~> 5.3.0)
   - ReachabilitySwift (~> 4.3)
@@ -65,6 +65,6 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
-PODFILE CHECKSUM: 680f3652d60c57b58f8d6e059f162380292fc6c0
+PODFILE CHECKSUM: 9f1cc1c12750475911794b30a86dcec1378f0283
 
 COCOAPODS: 1.8.4
