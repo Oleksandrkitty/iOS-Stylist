@@ -255,7 +255,7 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
                 if (error != nil){
                     print("reverse geodcode fail: \(error!.localizedDescription)")
                 }
-                if let pm = placemarks as? [CLPlacemark] {
+                if let pm = placemarks {
                     if pm.count > 0 {
                         
                         let pm = placemarks![0]
