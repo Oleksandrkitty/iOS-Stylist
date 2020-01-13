@@ -5,7 +5,7 @@ target 'BogoArtistApp' do
     use_frameworks!
 
     pod 'SwiftyJSON', '~> 5.0'
-    pod 'CarbonKit', '~> 2.2.2'
+    pod 'CarbonKit', '~> 2.3.1'
     pod 'CVCalendar', '~> 1.6.2'
     pod 'HCSStarRatingView', '~> 1.5'
     pod 'GoogleMaps', '~> 2.5.0'
