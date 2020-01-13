@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UITextFieldDelegate {
     
@@ -176,37 +177,22 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
         dict[pGCM_ID]           = USERDEFAULT.value(forKey: pDeviceToken) as AnyObject
         dict[pDeviceToken]      = USERDEFAULT.value(forKey: pDeviceToken) as AnyObject
         dict[pDeviceType]       = "IOS"
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINameLogin, hudType: .simple) { (result, error, status) in
-            
-            if (error == nil) {
-                
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue {
-                        USERDEFAULT.set(response.validatedValue("arProfilePic", expected: "" as AnyObject) as! String, forKey: "userProfilePic")
-                        let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGBaseVC") as! BGBaseVC
-                        self.navigationController?.pushViewController(ObjVC, animated: true)
-                        let data = response.validatedValue("data", expected: NSDictionary()) as! Dictionary<String, AnyObject>
-                        USERDEFAULT.set(data.validatedValue("id" , expected: "" as AnyObject) as! String, forKey: pArtistID)
-                        let lattitudeArtist = data.validatedValue("arLat" , expected: "" as AnyObject).doubleValue
-                        let longitudeArtist = data.validatedValue("arLong" , expected: "" as AnyObject).doubleValue
-                        USERDEFAULT.set(lattitudeArtist, forKey: "LatForDistance")
-                        USERDEFAULT.set(longitudeArtist, forKey: "LongForDistance")
-                        USERDEFAULT.set(data["arServiceType"], forKey: "_service")
-                        
-                        USERDEFAULT.synchronize()
-                    } else {
-                        let errorDic = response.validatedValue("message", expected: "" as AnyObject) as! String
-                        _ = AlertController.alert(title: "", message: errorDic)
-                    }
-                }
-                else {
-                    _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-                    
-                }
+
+        Api.requestJSON(.auth(email: obj.email, password: obj.password), success: {
+            value in
+            let json = JSON(value)
+            let token = json["auth_token"].string
+
+            if token != nil {
+                let defaults = UserDefaults.standard
+                defaults.set(token, forKey: kAuthToken)
+                defaults.synchronize()
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoginNotification"), object: nil)
+
+                let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGBaseVC") as! BGBaseVC
+                self.navigationController?.pushViewController(ObjVC, animated: true)
             }
-        }
+        })
     }
     
     // MARK:- --->UIResponder function

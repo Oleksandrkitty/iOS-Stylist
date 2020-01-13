@@ -119,6 +119,9 @@
 		77EE43FD1FF79A180048B35A /* RobotoCondensed-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77EE43EA1FF79A180048B35A /* RobotoCondensed-Light.ttf */; };
 		77EE43FE1FF79A180048B35A /* RobotoCondensed-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77EE43EB1FF79A180048B35A /* RobotoCondensed-LightItalic.ttf */; };
 		77EE43FF1FF79A180048B35A /* RobotoCondensed-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77EE43EC1FF79A180048B35A /* RobotoCondensed-Regular.ttf */; };
+		84F30B2123CCEDBF009905EC /* Api+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F30B1E23CCEDBF009905EC /* Api+Networking.swift */; };
+		84F30B2223CCEDBF009905EC /* Api+RequestConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F30B1F23CCEDBF009905EC /* Api+RequestConvertible.swift */; };
+		84F30B2323CCEDBF009905EC /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F30B2023CCEDBF009905EC /* Api.swift */; };
 		945A570BE449FA36D2CA2CB0 /* Pods_BogoArtistApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2F3FB042034383B0019FAED /* Pods_BogoArtistApp.framework */; };
 		C211736B2010B2570042F83A /* BGReviewVCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C211736A2010B2570042F83A /* BGReviewVCViewController.swift */; };
 		C211736D2010B5F70042F83A /* BGReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C211736C2010B5F70042F83A /* BGReviewCell.swift */; };
@@ -284,6 +287,9 @@
 		77EE43EB1FF79A180048B35A /* RobotoCondensed-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RobotoCondensed-LightItalic.ttf"; sourceTree = "<group>"; };
 		77EE43EC1FF79A180048B35A /* RobotoCondensed-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RobotoCondensed-Regular.ttf"; sourceTree = "<group>"; };
 		83C4D7F2C640443970DF7E5B /* Pods-BogoArtistApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BogoArtistApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-BogoArtistApp/Pods-BogoArtistApp.release.xcconfig"; sourceTree = "<group>"; };
+		84F30B1E23CCEDBF009905EC /* Api+Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Api+Networking.swift"; sourceTree = "<group>"; };
+		84F30B1F23CCEDBF009905EC /* Api+RequestConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Api+RequestConvertible.swift"; sourceTree = "<group>"; };
+		84F30B2023CCEDBF009905EC /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		C211736A2010B2570042F83A /* BGReviewVCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGReviewVCViewController.swift; sourceTree = "<group>"; };
 		C211736C2010B5F70042F83A /* BGReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGReviewCell.swift; sourceTree = "<group>"; };
 		C211736E2010C11A0042F83A /* BGReviewList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGReviewList.swift; sourceTree = "<group>"; };
@@ -498,6 +504,9 @@
 		46E0C1EB1FF2942F00CA424C /* WebApiClasses */ = {
 			isa = PBXGroup;
 			children = (
+				84F30B2023CCEDBF009905EC /* Api.swift */,
+				84F30B1E23CCEDBF009905EC /* Api+Networking.swift */,
+				84F30B1F23CCEDBF009905EC /* Api+RequestConvertible.swift */,
 				46E0C1F51FF2942F00CA424C /* ServiceHelper.swift */,
 				C27AE6CE2011F03000BDDD03 /* PServiceHelper.swift */,
 				46E0C1EC1FF2942F00CA424C /* ApiConstants.swift */,
@@ -980,6 +989,7 @@
 				0D3330F61FF5245100BF8014 /* BGWalkThroughCell2.swift in Sources */,
 				46E0C2231FF2943000CA424C /* EKMediaPicker.swift in Sources */,
 				46E0C2261FF2943000CA424C /* RPicker.swift in Sources */,
+				84F30B2223CCEDBF009905EC /* Api+RequestConvertible.swift in Sources */,
 				46E0C1C21FF2938B00CA424C /* AppDelegate.swift in Sources */,
 				46E0C2441FF2943000CA424C /* WalkThroughVC.swift in Sources */,
 				0D398221200482AD00E169CD /* SDWebImageManager.m in Sources */,
@@ -1005,6 +1015,7 @@
 				46E0C23F1FF2943000CA424C /* UIViewExtension.swift in Sources */,
 				0D16A61E1FF2A04E002A89A6 /* TPKeyboardAvoidingTableView.m in Sources */,
 				0D16A6121FF29DAC002A89A6 /* BGSingleTextFieldCell.swift in Sources */,
+				84F30B2323CCEDBF009905EC /* Api.swift in Sources */,
 				0D3331011FF53E3200BF8014 /* BGBookedTimeVC.swift in Sources */,
 				46E0C21F1FF2943000CA424C /* AlertController.swift in Sources */,
 				46E0C23C1FF2943000CA424C /* TextFieldExtension.swift in Sources */,
@@ -1013,6 +1024,7 @@
 				0D16A60E1FF29CE5002A89A6 /* BGProfileVC.swift in Sources */,
 				0D398220200482AD00E169CD /* SDWebImageDownloaderOperation.m in Sources */,
 				C22F2A8320230BD500768E18 /* BGReviewModel.swift in Sources */,
+				84F30B2123CCEDBF009905EC /* Api+Networking.swift in Sources */,
 				46E0C23D1FF2943000CA424C /* UITableViewExtension.swift in Sources */,
 				0D398222200482AD00E169CD /* SDWebImagePrefetcher.m in Sources */,
 				0D39821F200482AD00E169CD /* SDWebImageDownloader.m in Sources */,
