@@ -20,9 +20,20 @@ let defaults = UserDefaults.standard
 let kWindowWidth = UIScreen.main.bounds.size.width
 let kWindowHeight = UIScreen.main.bounds.size.height
 
+func currentUser() -> BGUserInfo? {
+    try? BGUserInfo.fromJWTToken()
+}
+
+func currentUserId() -> String {
+    currentUser()?.userID ?? ""
+}
+
+func isUserLoggedIn() -> Bool {
+    currentUser() != nil
+}
 
 var currentTimestamp: String {
-    return "\(Date().timeIntervalSince1970)"
+    String(Date().timeIntervalSince1970)
 }
 
 // MARK: - Useful functions

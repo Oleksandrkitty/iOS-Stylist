@@ -14,7 +14,7 @@ class WalkThroughVC: UIViewController {
     }
     
     @objc func dismissWalkThrough() {
-        if USERDEFAULT.value(forKey: pArtistID) == nil || UserDefaults.standard.value(forKey: pArtistID) as! String == "" {
+        if !isUserLoggedIn() {
             let loginVC = UIStoryboard.init(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "BGLoginVC") as! BGLoginVC
             self.navigationController?.pushViewController(loginVC, animated: true)
             

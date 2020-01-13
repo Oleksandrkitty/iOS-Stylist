@@ -89,6 +89,7 @@
 		46E0C23F1FF2943000CA424C /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E0C20F1FF2942F00CA424C /* UIViewExtension.swift */; };
 		46E0C2401FF2943000CA424C /* UIWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E0C2101FF2942F00CA424C /* UIWindowExtension.swift */; };
 		46E0C2441FF2943000CA424C /* WalkThroughVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E0C2171FF2942F00CA424C /* WalkThroughVC.swift */; };
+		5860389729710CAB0C0BD2E6 /* BGUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58603FCE8954A12EB733E07B /* BGUserInfo.swift */; };
 		5AC15878FF613017BE44029D /* Pods_BogoArtistAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46A39F45C9868B9CFE87F5AA /* Pods_BogoArtistAppTests.framework */; };
 		662975BB5E6F712DF6F5F801 /* Pods_BogoArtistApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCCF3FA8B159C5F495A87FA0 /* Pods_BogoArtistApp.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		77099EA41FF5696200CF704F /* BGAppointmentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77099EA31FF5696200CF704F /* BGAppointmentVC.swift */; };
@@ -255,6 +256,7 @@
 		46E0C2101FF2942F00CA424C /* UIWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtension.swift; sourceTree = "<group>"; };
 		46E0C2171FF2942F00CA424C /* WalkThroughVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalkThroughVC.swift; sourceTree = "<group>"; };
 		46E0C2461FF2949C00CA424C /* BogoArtistApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BogoArtistApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		58603FCE8954A12EB733E07B /* BGUserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BGUserInfo.swift; sourceTree = "<group>"; };
 		77099EA31FF5696200CF704F /* BGAppointmentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGAppointmentVC.swift; sourceTree = "<group>"; };
 		77221F481FFB796200C0EB8B /* BogoArtistAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BogoArtistAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77221F4A1FFB796200C0EB8B /* BogoArtistAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BogoArtistAppTests.swift; sourceTree = "<group>"; };
@@ -564,6 +566,7 @@
 				C211736E2010C11A0042F83A /* BGReviewList.swift */,
 				C22F2A8220230BD500768E18 /* BGReviewModel.swift */,
 				4610EF2B202D67AA006F3FF1 /* BGGalleryInfo.swift */,
+				58603FCE8954A12EB733E07B /* BGUserInfo.swift */,
 			);
 			path = ModelClasses;
 			sourceTree = "<group>";
@@ -1036,6 +1039,7 @@
 				0D508473200112E1008375B6 /* BGChatReceivedTableViewCell.swift in Sources */,
 				0D16A60B1FF29C87002A89A6 /* BGLoginVC.swift in Sources */,
 				46E0C21E1FF2943000CA424C /* RContainerController.swift in Sources */,
+				5860389729710CAB0C0BD2E6 /* BGUserInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

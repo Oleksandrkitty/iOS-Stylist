@@ -68,8 +68,8 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
     
     // MARK:- MAP Helper Method
     @objc  func showSpinningWheel()   {
-        let catgegoryVC = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGLoginVC") as! BGLoginVC
-        self.navigationController?.pushViewController(catgegoryVC, animated: false)
+        let loginViewController = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGLoginVC") as! BGLoginVC
+        self.navigationController?.pushViewController(loginViewController, animated: false)
         self.dismiss(animated: false, completion: nil)
     }
     

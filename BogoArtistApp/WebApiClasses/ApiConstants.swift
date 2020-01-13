@@ -102,8 +102,7 @@ let pYear                                  = "year"
 let pSlot                                  = "slot"
 let pScheduledate                          = "schedule_date"
 
-let kAuthToken = "AuthToken"
-
+public let kAuthToken = "AuthToken"
 
 let USERDEFAULT                             = UserDefaults.standard
 

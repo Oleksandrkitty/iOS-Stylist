@@ -21,15 +21,15 @@ var schedule        : UIViewController?
 var profile         : UIViewController?
 
 //Global Object of CarbonKit
-weak var carbonTabSwipeNewNavigation : CarbonTabSwipeNavigation?;
+var carbonTabSwipeNewNavigation : CarbonTabSwipeNavigation?
 
 class BGBaseVC: UIViewController, CarbonTabSwipeNavigationDelegate {
 
-    @IBOutlet weak var tabContainerView : UIView!
-    @IBOutlet weak var containerView    : UIView!
-    @IBOutlet weak var scheduleButton   : UIButton!
-    @IBOutlet weak var dashBoardButton  : UIButton!
-    @IBOutlet weak var profileButton    : UIButton!
+    @IBOutlet var tabContainerView : UIView!
+    @IBOutlet var containerView    : UIView!
+    @IBOutlet var scheduleButton   : UIButton!
+    @IBOutlet var dashBoardButton  : UIButton!
+    @IBOutlet var profileButton    : UIButton!
     
     //MARK:- =====================>View Lifecycle Methods<=================//
     override func viewDidLoad() {
