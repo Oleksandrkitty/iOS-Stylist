@@ -187,9 +187,9 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
             let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
             ObjVC.modalPresentationStyle = .overCurrentContext
             ObjVC.modalTransitionStyle = .coverVertical
-            ObjVC.bookingID = info["msgBkId"]!
-            ObjVC.cleintID = info["msgClId"]!
-            ObjVC.artistID = info["msgArId"]!
+            ObjVC.bookingId = info["msgBkId"]!
+            ObjVC.clientId = info["msgClId"]!
+            ObjVC.stylistId = info["msgArId"]!
             let vc = self.navigationController?.topViewController
             vc?.present(ObjVC, animated: false, completion: nil)
         }
@@ -243,10 +243,10 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
             let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
             ObjVC.modalPresentationStyle = .overCurrentContext
             ObjVC.modalTransitionStyle = .coverVertical
-            ObjVC.bookingID = bookingID
-            ObjVC.cleintID = cleintID
-            ObjVC.isfromAppointment = true
-            ObjVC.chatInfo = upcommingInfo
+            ObjVC.bookingId = bookingID
+            ObjVC.clientId = cleintID
+            // ObjVC.isfromAppointment = true
+            // ObjVC.chatInfo = upcommingInfo
             self.present(ObjVC, animated: false, completion: nil)
             break
         case 2:

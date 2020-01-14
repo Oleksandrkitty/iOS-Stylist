@@ -179,9 +179,10 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         let arr: [BGUpcomingInfoModel] = upcommingList[(cellIndexPath?.section)!]["list"] as! [BGUpcomingInfoModel]
         let localModelObject = arr[arr.count - 1 - (sender.tag - 1000)]
         localModelObject.isBuubleShow = false
-        ObjVC.chatInfo = arr[sender.tag - 1000]
-        ObjVC.bookingID = localModelObject.bookingID
-        ObjVC.cleintID = localModelObject.clientID
+        // todo
+        // ObjVC.chatInfo = arr[sender.tag - 1000]
+        ObjVC.bookingId = localModelObject.bookingID
+        // ObjVC.clientId = localModelObject.clientID
         self.newNavigationController = UINavigationController.init(rootViewController: ObjVC)
         self.newNavigationController.modalPresentationStyle = .overCurrentContext
         self.newNavigationController.modalTransitionStyle = .coverVertical

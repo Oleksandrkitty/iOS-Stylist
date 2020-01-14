@@ -62,7 +62,7 @@ extension Api {
     static func upload(_ endpoint: Api, showDialog: Bool = true, success: @escaping (Any) -> Void, failure: ((Error) -> Void)? = nil) {
         switchNetworkIndicator(show: true, useDialog: showDialog)
         Alamofire.upload(multipartFormData: { (formData) in
-            for param in endpoint.params {
+            for param in endpoint.params ?? [:] {
                 if let image = param.value as? UIImage, let imgData = image.jpegData(compressionQuality: 0.7) {
                     formData.append(imgData, withName: param.key, fileName: "avatar.jpg" , mimeType: "image/jpg")
                 } else if let data = (param.value as! String).data(using: .utf8) {

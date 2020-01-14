@@ -23,6 +23,8 @@ extension Api: URLRequestConvertible {
             return try URLEncoding.default.encode(req, with: params)
         case .becomeStylist:
             return try URLEncoding.httpBody.encode(req, with: params)
+        case .availableStylists, .messages:
+            return try URLEncoding.default.encode(req, with: params)
         default:
             return try JSONEncoding.default.encode(req, with: params)
         }

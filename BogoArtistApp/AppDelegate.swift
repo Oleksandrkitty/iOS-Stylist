@@ -295,9 +295,9 @@ let GOOGLE_ = "Swift Constants"
                                     let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
                                     ObjVC.modalPresentationStyle = .overCurrentContext
                                     ObjVC.modalTransitionStyle = .coverVertical
-                                    ObjVC.bookingID = msgBookEdID
-                                    ObjVC.cleintID = msgClientEdID
-                                    ObjVC.artistID = msgArtistEdID
+                                    ObjVC.bookingId = msgBookEdID
+                                    ObjVC.clientId = msgClientEdID
+                                    ObjVC.stylistId = msgArtistEdID
                                     let vc = self.navigationController?.topViewController
                                     vc?.present(ObjVC, animated: true, completion: nil)
                                 }else{
@@ -316,9 +316,9 @@ let GOOGLE_ = "Swift Constants"
                                 let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
                                 ObjVC.modalPresentationStyle = .overCurrentContext
                                 ObjVC.modalTransitionStyle = .coverVertical
-                                ObjVC.bookingID = msgBookEdID
-                                ObjVC.cleintID = msgClientEdID
-                                ObjVC.artistID = msgArtistEdID
+                                ObjVC.bookingId = msgBookEdID
+                                ObjVC.clientId = msgClientEdID
+                                ObjVC.stylistId = msgArtistEdID
                                 let vc = self.navigationController?.topViewController
                                 vc?.present(ObjVC, animated: true, completion: nil)
                             }else{
@@ -329,9 +329,9 @@ let GOOGLE_ = "Swift Constants"
                                         let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
                                         ObjVC.modalPresentationStyle = .overCurrentContext
                                         ObjVC.modalTransitionStyle = .coverVertical
-                                        ObjVC.bookingID = msgBookEdID
-                                        ObjVC.cleintID = msgClientEdID
-                                        ObjVC.artistID = msgArtistEdID
+                                        ObjVC.bookingId = msgBookEdID
+                                        ObjVC.clientId = msgClientEdID
+                                        ObjVC.stylistId = msgArtistEdID
                                         let vc = self.navigationController?.topViewController
                                         vc?.present(ObjVC, animated: true, completion: nil)
                                     }else{
