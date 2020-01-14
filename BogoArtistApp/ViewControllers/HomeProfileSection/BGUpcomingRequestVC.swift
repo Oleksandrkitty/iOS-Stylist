@@ -6,6 +6,25 @@
 
 import UIKit
 
+enum BGBookingGroupType {
+    case today,
+         tomorrow,
+         yesterday,
+         other(date: String)
+}
+
+class BGBookingGroupInfo {
+    
+    var bookings = [BGBookingInfo]()
+    var type: BGBookingGroupType = .today
+
+    init(bookings: [BGBookingInfo], type: BGBookingGroupType) {
+        self.bookings = bookings
+        self.type = type
+    }
+    
+}
+
 class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDelegate {
     
     @IBOutlet var upComingtableView : UITableView!
@@ -15,7 +34,7 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
     var isBubbleHidden              = false
     var bubbleInfo                  = BGUpcomingInfoModel()
     @IBOutlet var noRecordLabel     : UILabel!
-    var upcommingList               = [Dictionary<String, AnyObject>]()
+    var upcommingList = [BGBookingGroupInfo]()
     var newNavigationController     : UINavigationController!
     
     // MARK:- ============ View Lifecycle Methods ==============
@@ -41,16 +60,11 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
             bubbleInfo.bubbleRemoveMessageId = ""
             self.bookingID = info["msgBkId"]!
             self.messageCount = info["msgCount"]!
-            if upcommingList.count == 0{
+            if upcommingList.count == 0 {
                 for index in upcommingList.count...0 {
                     let dict = upcommingList[index]
-                    let arr: [BGUpcomingInfoModel] = dict["list"] as! [BGUpcomingInfoModel]
-                    for obj in arr {
-                        if obj.bookingID == self.bookingID {
-                            obj.messageStatus = true
-                            obj.messageCount = messageCount
-                        }
-                    }
+                    let arr = dict
+                    let obj = arr
                 }
             }
             self.upComingtableView.reloadData()
@@ -61,15 +75,12 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         self.callApiForFetchUpcommingBooking()
     }
     
-    // MARK:- ============ UITableView DataSource Methods ==============
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.upcommingList.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let temDictionary: Dictionary<String, AnyObject> = upcommingList[section]
-        let arr: [BGUpcomingInfoModel] = temDictionary["list"] as! [BGUpcomingInfoModel]
-        return arr.count
+        upcommingList[section].bookings.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,28 +88,29 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         let upcomingCell = tableView.dequeueReusableCell(withIdentifier: kUpcomingCellIdentifier) as! BGUpcominCell
         upcomingCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
-        let arr: [BGUpcomingInfoModel] = upcommingList[indexPath.section]["list"] as! [BGUpcomingInfoModel]//userLat
-        let upcommingInfo : BGUpcomingInfoModel = arr[arr.count - 1 - indexPath.row]
+        let bookings = upcommingList[indexPath.section].bookings
+        let upcommingInfo = bookings[bookings.count - 1 - indexPath.row]
         upcomingCell.messageCount.tag = indexPath.row + 1000
         self.sectionCount = indexPath.section
-        upcomingCell.messageCount.isHidden = !upcommingInfo.messageStatus
-        upcomingCell.messageCount.setTitle(upcommingInfo.messageCount, for: .normal)
+        upcomingCell.messageCount.isHidden = true // !upcommingInfo.status
+        //upcomingCell.messageCount.setTitle(upcommingInfo.messageCount, for: .normal)
         
         upcomingCell.messageCount.addTarget(self, action: #selector(openChat(_:)), for: .touchUpInside)
         let currentLat = USERDEFAULT.value(forKey: "LatForDistance") != nil ?  USERDEFAULT.value(forKey: "LatForDistance") : USERDEFAULT.value(forKey: "userLat")
         let currentLong = USERDEFAULT.value(forKey: "LongForDistance") != nil ? USERDEFAULT.value(forKey: "LongForDistance") : USERDEFAULT.value(forKey: "userLong")
         if currentLat != nil && currentLong != nil{
             
-            let distance = distanceBetweenTwoCoordinate(currentlat: currentLat as! Double, currentlong: currentLong as! Double, otherLat: Double(upcommingInfo.bookingLatitude)!, otherLong: Double(upcommingInfo.bookingLongitude)!)
+            let distance = distanceBetweenTwoCoordinate(currentlat: currentLat as! Double, currentlong: currentLong as! Double, otherLat: Double(upcommingInfo.serviceLat) ?? 0, otherLong: Double(upcommingInfo.serviceLong) ?? 0)
             let roundedValue = String(distance.rounded())
             let cropedString = roundedValue + "mi away"
             upcomingCell.locationButton.setTitle(cropedString, for: .normal)
         }
-        upcomingCell.clientName.text = upcommingInfo.clientFirstName + " " + upcommingInfo.clientLastName;
+        upcomingCell.clientName.text = upcommingInfo.clientFullName
         upcomingCell.locationButton.indexPath = indexPath
         upcomingCell.locationButton.addTarget(self, action: #selector(gotoLocationOnMap(_ :)), for: .touchUpInside)
-        upcomingCell.timeLabel.text = upcommingInfo.bookingTime
-        upcomingCell.clientProfile.sd_setImage(with:URL(string: upcommingInfo.clientImage), placeholderImage: UIImage(named: "profile_default"))
+        upcomingCell.timeLabel.text = upcommingInfo.timeFrom
+        
+        // upcomingCell.clientProfile.sd_setImage(with: URL(string: upcommingInfo.cl), placeholderImage: UIImage(named: "profile_default"))
         
         return upcomingCell
     }
@@ -112,8 +124,8 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGAppointmentVC") as! BGAppointmentVC
         ObjVC.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
         
-        let arr: [BGUpcomingInfoModel] = upcommingList[indexPath.section]["list"] as! [BGUpcomingInfoModel]
-        ObjVC.upcommingInfo = arr[arr.count - 1 - indexPath.row]
+        let arr = upcommingList[indexPath.section].bookings
+        ObjVC.booking = arr[arr.count - 1 - indexPath.row]
         self.newNavigationController = UINavigationController.init(rootViewController: ObjVC)
         self.newNavigationController.modalPresentationStyle = .overCurrentContext
         self.newNavigationController.modalTransitionStyle = .coverVertical
@@ -126,21 +138,24 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         
         let view = UIView(frame: CGRect(x: 0, y: 10, width: tableView.frame.size.width, height: 25))
         let label = UILabel(frame: CGRect(x: 20, y: 0, width: 150, height: 15))
-        
-        let temDictionary: Dictionary<String, AnyObject> = upcommingList[section]
-        if(temDictionary["Date"] as? String == getFormatStringFromDate(date: Date())){
-            label.text = "Today"
-            label.textColor = UIColor.init(red: 104/255, green: 206/255, blue: 59/255, alpha: 1)
-        }else if(temDictionary["Date"] as? String == getFormatStringFromDate(date:Date().addingTimeInterval(-24 * 60 * 60))){
-            label.text = "Yesterday"
-            label.textColor = UIColor.lightGray
-        }else if(temDictionary["Date"] as? String == getFormatStringFromDate(date:Date().addingTimeInterval(24 * 60 * 60))) {
-            label.text = "Tomorrow"
-            label.textColor = UIColor.lightGray
-        }else{
-            label.text = temDictionary["Date"] as? String
-            label.textColor = UIColor.lightGray
+     
+        let group = upcommingList[section]
+
+        switch group.type {
+            case .today:
+                label.textColor = UIColor.init(red: 104/255, green: 206/255, blue: 59/255, alpha: 1)
+                label.text = "Today"
+            case .yesterday:
+                label.textColor = UIColor.lightGray
+                label.text = "Yesterday"
+            case .tomorrow:
+                label.textColor = UIColor.lightGray
+                label.text = "Tomorrow"
+            case .other(date: let date):
+                label.text = date
+                label.textColor = UIColor.lightGray
         }
+        
         label.font = UIFont.boldSystemFont(ofSize: 12)
         view.addSubview(label)
         return view
@@ -151,9 +166,10 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
     }
     
     @objc func gotoLocationOnMap(_ sender : IndexPathButton){
-        let arr: [BGUpcomingInfoModel] = upcommingList[(sender.indexPath?.section)!]["list"] as! [BGUpcomingInfoModel]//userLat
-        let upcommingInfo : BGUpcomingInfoModel = arr[(sender.indexPath?.row)!]
-        let destinationAddress = "\(upcommingInfo.bookingLatitude),\(upcommingInfo.bookingLongitude)"
+        let arr = upcommingList[sender.indexPath?.section ?? 0].bookings
+        
+        let booking = arr[sender.indexPath?.row ?? 0]
+        let destinationAddress = "\(booking.serviceLat),\(booking.serviceLong)"
         if UIApplication.shared.canOpenURL(URL(string: "comgooglemapsurl://")!) {
             let strMapUrl = "comgooglemaps://?saddr=Current%20Location&daddr=\(destinationAddress)&center=Current%20Location&directionsmode=driving"
             let strUrl = URL(string: strMapUrl)
@@ -176,12 +192,12 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         let cellIndexPath = self.upComingtableView.indexPathForRow(at: pointInTable)
         let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGChatViewController") as! BGChatViewController
         ObjVC.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-        let arr: [BGUpcomingInfoModel] = upcommingList[(cellIndexPath?.section)!]["list"] as! [BGUpcomingInfoModel]
-        let localModelObject = arr[arr.count - 1 - (sender.tag - 1000)]
-        localModelObject.isBuubleShow = false
+        let arr = upcommingList[cellIndexPath?.section ?? 0].bookings
+        let booking = arr[arr.count - 1 - (sender.tag - 1000)]
+        // booking.isBuubleShow = false
         // todo
         // ObjVC.chatInfo = arr[sender.tag - 1000]
-        ObjVC.bookingId = localModelObject.bookingID
+        ObjVC.bookingId = String(booking.id)
         // ObjVC.clientId = localModelObject.clientID
         self.newNavigationController = UINavigationController.init(rootViewController: ObjVC)
         self.newNavigationController.modalPresentationStyle = .overCurrentContext
@@ -199,29 +215,12 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
         
         let dict = NSMutableDictionary()
         dict[pArtistID] = USERDEFAULT.string(forKey: pArtistID)
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINameGetUpcommingAppointment, hudType: .simple) { (result, error, status) in
-            if (error == nil) { 
-                if let response = result as? Dictionary<String, AnyObject> {
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue{
-                        
-                        let data : Array<Dictionary<String, AnyObject>> = response.validatedValue("upcoming", expected: Array<Dictionary<String, AnyObject>>() as AnyObject) as! Array<Dictionary<String, AnyObject>>
-                        self.upcommingList = BGUpcomingInfoModel.getUpcommingList(list: data)
-                        if(self.upcommingList.count == 0){
-                            self.noRecordLabel.isHidden = false
-                            self.upComingtableView.isHidden = true
-                        }else{
-                            self.noRecordLabel.isHidden = true
-                            self.upComingtableView.isHidden = false
-                        }
-                        self.upComingtableView.reloadData()
-                    }
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
-        }
+
+        Api.requestMappableArray(.upcomingBookings, success: {
+            (upcomingBookings: [BGBookingInfo]) in
+            self.upcommingList = [BGBookingGroupInfo(bookings: upcomingBookings, type: .today)]
+            self.upComingtableView.reloadData()
+        })
     }
     
     override func didReceiveMemoryWarning() {

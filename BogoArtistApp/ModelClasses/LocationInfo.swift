@@ -25,6 +25,6 @@ class LocationInfo: NSObject {
     var notificationText = ""
     var notificationType = ""
     var notificationDate = ""
-    var bookingID = ""
+    var bookingID = 0
 
 }

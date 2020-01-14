@@ -30,17 +30,16 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     @IBOutlet weak var fServiceName: UILabel!
     @IBOutlet weak var sServiceName: UILabel!
     
-    var upcommingInfo                               = BGUpcomingInfoModel()
-    var upcommingList                               = [Dictionary<String, AnyObject>]()
+    var booking = BGBookingInfo()
     var bookingID                                   = String()
     var phone_number                                = ""
     var isFromNotification                          = false
-    var isFromIntitalLoad                           = false
-    var cleintID                                    = String()
-    var  bookingIDFromNoti                          = ""
+    var isFromInitialLoad = false
+    var clientId = String()
+    var bookingIDFromNotification = ""
     var isFromCancelBooking                         = true
     var bookingComplete                             = false
-    var completeBookingTosend                       = false
+    var completeBookingToSend = false
     
     private var timer : Timer! = nil
     
@@ -61,13 +60,13 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
         else {
             
             self.callApiForbookingDetail()
-            isFromIntitalLoad = true
+            isFromInitialLoad = true
             self.initialMethod()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(chatDismiss), name: NSNotification.Name(rawValue: "dismissAppointment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reloadApi(notification: )), name: NSNotification.Name(rawValue: "reloadApi"), object: nil)
         APPDELEGATE.isAppointmentOnTop = true
-        APPDELEGATE.threadId = upcommingInfo.bookingID
+        APPDELEGATE.threadId = String(booking.id)
         
         
         
@@ -140,7 +139,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        if completeBookingTosend {
+        if completeBookingToSend {
             
             self.startBookingBtn.isHidden = true
             self.contactBtn.isHidden = true
@@ -163,20 +162,23 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
      Initial Method
      */
     func initialMethod()  {
-        self.getAddressFromLatLon(pdblLatitude: Double(upcommingInfo.bookingLatitude)!, withLongitude: Double(upcommingInfo.bookingLongitude)!)
-        self.detailsTexTView.text = upcommingInfo.bookingDescription == "" ? "No additional information " : upcommingInfo.bookingDescription
-        self.contactBtn.setTitle("Contact \(upcommingInfo.clientFirstName)", for: .normal)
-        self.clientName.text = upcommingInfo.clientFirstName + " " +  upcommingInfo.clientLastName
-        self.clientTime.text = upcommingInfo.bookingTime
-        self.clientImageView.sd_setImage(with:URL(string: upcommingInfo.clientImage ) , placeholderImage: UIImage(named: "profile_default") , options: .refreshCached)
-        bookingID = upcommingInfo.bookingID
-        cleintID = upcommingInfo.clientID
-        if(upcommingInfo.bookingDate == getFormatStringFromDate(date: Date())){
-            self.clientTime.text = "Today @ \(upcommingInfo.bookingTime)"
-        }else if(upcommingInfo.bookingDate == getFormatStringFromDate(date:Date().addingTimeInterval(24 * 60 * 60))){
-            self.clientTime.text = "Tomorrow @ \(upcommingInfo.bookingTime)"
+        self.getAddressFromLatLon(pdblLatitude: Double(booking.serviceLat) ?? 0, withLongitude: Double(booking.serviceLong) ?? 0)
+        self.detailsTexTView.text = "" // booking.bookingDescription == "" ? "No additional information " : booking.bookingDescription
+        self.contactBtn.setTitle("Contact \(booking.clientFullName)", for: .normal)
+        self.clientName.text = booking.clientFullName
+        self.clientTime.text = booking.timeFrom
+        
+        
+        // self.clientImageView.sd_setImage(with:URL(string: booking.clientImage ) , placeholderImage: UIImage(named: "profile_default") , options: .refreshCached)
+        
+        bookingID = String(booking.id)
+        clientId = String(booking.clientId)
+        if (booking.date == getFormatStringFromDate(date: Date())){
+            self.clientTime.text = "Today @ \(booking.timeFrom)"
+        }else if(booking.date == getFormatStringFromDate(date:Date().addingTimeInterval(24 * 60 * 60))){
+            self.clientTime.text = "Tomorrow @ \(booking.timeFrom)"
         }else{
-            self.clientTime.text = "\(upcommingInfo.bookingDate) @ \(upcommingInfo.bookingTime)"
+            self.clientTime.text = "\(booking.date) @ \(booking.timeFrom)"
         }
         NotificationCenter.default.addObserver(self, selector: #selector(chatDismiss), name: NSNotification.Name(rawValue: "UserDismiss"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(chatNotificationMethod(notification: )), name: NSNotification.Name(rawValue: "AppointmentNotification"), object: nil)
@@ -197,7 +199,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     
     @objc func reloadApi(notification: Notification)  {
         if let info = notification.userInfo as? Dictionary<String,String> {
-            upcommingInfo.bookingID = info["msgClId"]!
+            booking.id = Int(info["msgClId"] ?? "") ?? 0
             self.callApiForbookingDetail()
         }
     }
@@ -244,14 +246,15 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
             ObjVC.modalPresentationStyle = .overCurrentContext
             ObjVC.modalTransitionStyle = .coverVertical
             ObjVC.bookingId = bookingID
-            ObjVC.clientId = cleintID
+            ObjVC.clientId = clientId
             // ObjVC.isfromAppointment = true
-            // ObjVC.chatInfo = upcommingInfo
+            // ObjVC.chatInfo = booking
             self.present(ObjVC, animated: false, completion: nil)
             break
         case 2:
-            if upcommingInfo.phone_Number != ""{
-                let busPhone = upcommingInfo.phone_Number // To be replaced by phoone number of client.
+            /*
+            if booking.phone != "" {
+                let busPhone = booking.phone_Number // To be replaced by phoone number of client.
                 if let url = URL(string: "tel://\(busPhone)"), UIApplication.shared.canOpenURL(url) {
                     if #available(iOS 10, *) {
                         UIApplication.shared.open(url)
@@ -262,6 +265,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
             }else{
                 AlertController.alert(title: "No contact number available .")
             }
+            */
             break
         default:
             break
@@ -273,7 +277,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
      Maps button action
      */
     @IBAction func openMapsButtonAction(_ sender: UIButton) {
-        let destinationAddress = "\(upcommingInfo.bookingLatitude),\(upcommingInfo.bookingLongitude)"
+        let destinationAddress = "\(booking.serviceLat), \(booking.serviceLong)"
         if UIApplication.shared.canOpenURL(URL(string: "comgooglemapsurl://")!) {
             let strMapUrl = "comgooglemaps://?saddr=Current%20Location&daddr=\(destinationAddress)&center=Current%20Location&directionsmode=driving"
             let strUrl = URL(string: strMapUrl)
@@ -285,8 +289,9 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
             }
         } else {
             let addr = "http://maps.google.com/maps?daddr=\(destinationAddress)&saddr=Current%20Location"
-            let url = URL(string: addr)
-            UIApplication.shared.openURL(url!)
+            if let url = URL(string: addr) {
+                UIApplication.shared.openURL(url)
+            }
         }
     }
     
@@ -346,149 +351,105 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
         
         let localApiName = bookingComplete ? "completeBooking" :  isFromCancelBooking ? "cancelBooking" :kAPIStartBooking
         let dict = NSMutableDictionary()
-        dict[pBookingID] = upcommingInfo.bookingID
+        dict[pBookingID] = booking.id
         if bookingComplete {
             dict[pUserType] = "client"
-            completeBookingTosend = true
+            completeBookingToSend = true
         } else if isFromCancelBooking {
             dict[pUserType] = "client"
         }
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: localApiName, hudType: .simple) { (result, error, status) in
-            if (error == nil) {
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue {
-                        
-                        self.bookingComplete = true
-                        if localApiName == kAPIStartBooking {
-                            
-                            self.cancelBookingBtn.isHidden = true
-                        }
-                        else {
-                            
-                            self.cancelBookingBtn.isHidden = true
-                        }
-                        
-                        self.startBookingBtn.setTitle("Complete Booking", for: .normal)
-                        AlertController.alert(title: "", message:response.validatedValue("message", expected: "" as AnyObject) as! String)
-                        NotificationCenter.default.post(name: Notification.Name("dissmissBooking"), object: nil)
-                        if localApiName == "completeBooking"
-                        {
-                            self.navigationController?.popViewController(animated: false)
-                            self.dismiss(animated: false, completion: nil)
-                            
-                        }
-                        else if self.isFromCancelBooking {
-                            self.dismiss(animated: false, completion: nil)
-                        }
-                    }
-                }
-                else {
-                    _ = AlertController.alert(title: "", message: "Something went wrong.")
-                }
+        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: localApiName, hudType: .simple) {
+            (result, error, status) in
+
+            self.bookingComplete = true
+            if localApiName == kAPIStartBooking {
+                self.cancelBookingBtn.isHidden = true
+            } else {
+                self.cancelBookingBtn.isHidden = true
+            }
+
+            self.startBookingBtn.setTitle("Complete Booking", for: .normal)
+            NotificationCenter.default.post(name: Notification.Name("dissmissBooking"), object: nil)
+
+            if localApiName == "completeBooking" {
+                self.navigationController?.popViewController(animated: false)
+                self.dismiss(animated: false, completion: nil)
+
+            } else if self.isFromCancelBooking {
+                self.dismiss(animated: false, completion: nil)
             }
         }
     }
     
     func callApiForbookingDetail() {
-
-        let dict = NSMutableDictionary()
-        dict[pBookingID] = bookingIDFromNoti != "" ? bookingIDFromNoti : upcommingInfo.bookingID
+        let bookingId = bookingIDFromNotification != "" ? (Int(bookingIDFromNotification) ?? 0) : booking.id
         
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: bookingDetail, hudType: .simple) { (result, error, status) in
-            if (error == nil) {
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue{
-                        
-                        let dataArray : Array<Dictionary<String, AnyObject>> = response.validatedValue("data", expected: Array<Dictionary<String, AnyObject>>() as AnyObject) as! Array<Dictionary<String, AnyObject>>
-                        
-                        self.upcommingInfo = BGUpcomingInfoModel.getBookingList(list: dataArray)
-                        
-                        if !self.isFromCancelBooking {
-                            
-                            if self.upcommingInfo.bookingStatus == "cancel" {
-                                
-                                AlertController.alert(title: "Your Appointment has been cancelled.")
-                                self.dismiss(animated: false, completion: nil)
-                            }
-                        }
-                        else if self.isFromIntitalLoad {
-                            
-                            //confirm
-                            
-                            if self.upcommingInfo.bookingStatus == "start" {
-                                
-                                self.startBookingBtn.setTitle("Complete Booking", for: .normal)
-                                self.cancelBookingBtn.isHidden = true
-                                self.bookingComplete = true
-                            }
-                            else {
-                                
-                                self.startBookingBtn.setTitle("Start Booking", for: .normal)
-                                self.startBookingBtn.isHidden = true
-                                self.cancelBookingBtn.isHidden = false
-                                self.bookingComplete = false
-                                
-                                self.manageTimes(self.timer)
-                            }
-                        }
-                        else {
-                            
-                            self.startBookingBtn.isHidden = true
-                            self.cancelBookingBtn.isHidden = true
-                            self.contactBtn.isHidden = true
-                        }
-                        
-                        
-                        if (self.upcommingInfo.serviceType == "3") {
-                            
-                            self.serviceTypeName.text = "Hair & Makeup"
-                            self.fServiceName.text = self.upcommingInfo.hairServiceTitle
-                            self.sServiceName.text = self.upcommingInfo.makeupServiceTitle
-                            
-                            self.serviceBoxHeight.constant = 52
-                        
-                        }
-                        else {
-                            
-                            if (self.upcommingInfo.serviceType == "1") {
-                                
-                                self.serviceTypeName.text = "Hair Only"
-                                self.fServiceName.text = self.upcommingInfo.hairServiceTitle
-                            }
-                            else {
-                                
-                                self.serviceTypeName.text = "Makeup Only"
-                                self.fServiceName.text = self.upcommingInfo.makeupServiceTitle
-                            }
-                            
-                            self.sServiceName.isHidden = true
-                            self.serviceBoxHeight.constant = 28
-                            
-                        }
-                        
-                        self.serviceTypeBoxHeight.constant = 28
-                        self.height.constant = self.height.constant + self.serviceBoxHeight.constant + self.serviceTypeBoxHeight.constant
-                        self.scrollView.contentSize = CGSize(width: kWindowWidth, height: self.height.constant)
-                        setShadowview(newView: self.serviceTypeBox)
-                        setShadowview(newView: self.serviceBox)
-                        self.initialMethod()
-                    }
-                }
-                else {
-                    _ = AlertController.alert(title: "", message: "Something went wrong.")
-                }
+        Api.requestMappable(Api.booking(id: bookingId), success: {
+            (booking: BGBookingInfo) in
+            self.booking = booking
+
+            switch self.booking.status {
+                case "cancel":
+                    AlertController.alert(title: "Your Appointment has been cancelled.")
+                    self.dismiss(animated: false, completion: nil)
+
+                case "start": 
+                    self.startBookingBtn.setTitle("Complete Booking", for: .normal)
+                    self.cancelBookingBtn.isHidden = true
+                    self.bookingComplete = true
+
+                case "pending": 
+                    self.startBookingBtn.setTitle("Start Booking", for: .normal)
+                    self.startBookingBtn.isHidden = true
+                    self.cancelBookingBtn.isHidden = false
+                    self.bookingComplete = false
+                    self.manageTimes(self.timer)
+
+                default:
+                    self.startBookingBtn.isHidden = true
+                    self.cancelBookingBtn.isHidden = true
+                    self.contactBtn.isHidden = true
             }
-        }
+                        
+                        
+            if (self.booking.serviceId == 3) {
+
+                self.serviceTypeName.text = "Hair & Makeup"
+                self.fServiceName.text = self.booking.serviceName
+
+                self.serviceBoxHeight.constant = 52
+
+            } else {
+
+                if (self.booking.serviceId == 1) {
+
+                    self.serviceTypeName.text = "Hair Only"
+                    self.fServiceName.text = self.booking.serviceName
+                } else {
+
+                    self.serviceTypeName.text = "Makeup Only"
+                    self.fServiceName.text = self.booking.serviceName
+                }
+
+                self.sServiceName.isHidden = true
+                self.serviceBoxHeight.constant = 28
+            }
+
+            self.serviceTypeBoxHeight.constant = 28
+            self.height.constant = self.height.constant + self.serviceBoxHeight.constant + self.serviceTypeBoxHeight.constant
+            self.scrollView.contentSize = CGSize(width: kWindowWidth, height: self.height.constant)
+            setShadowview(newView: self.serviceTypeBox)
+            setShadowview(newView: self.serviceBox)
+            self.initialMethod()
+        })
     }
     
     
     @objc func manageTimes(_ timer:Timer) {
         
-        if self.upcommingInfo.bookingStatus == "confirm" {
+        if self.booking.status == "confirm" {
             
-            let dStr = "\(self.upcommingInfo.originalDate) \(self.upcommingInfo.originalTime)"
+            let dStr = "\(self.booking.date) \(self.booking.timeFrom)"
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"

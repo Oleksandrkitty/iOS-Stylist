@@ -35,7 +35,7 @@ enum Api {
          booking(id: Int),
          cancelBooking(id: Int),
          pastBookings(clientId: String),
-         upcomingBookings(clientId: String),
+         upcomingBookings,
 
          // payments
          pay(params: [String: Any]),
@@ -143,12 +143,11 @@ enum Api {
         case .client, .booking, .deleteCard, .message, .deleteMessage, .cancelBooking, .removeFavorite:
             return [:]
         case .favorites(clientId: let id),
-             .pastBookings(clientId: let id),
-             .upcomingBookings(clientId: let id):
+             .pastBookings(clientId: let id):
             return ["client_id": id]
         case .help(message: let message):
             return ["contacts":["message": message]]
-        case .serviceTypes, .cards:
+        case .serviceTypes, .cards, .upcomingBookings:
             return nil
         }
     }
