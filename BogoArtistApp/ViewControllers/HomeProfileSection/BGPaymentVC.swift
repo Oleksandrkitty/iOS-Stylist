@@ -44,7 +44,6 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
         
         self.detailsTableView.isHidden = true
-        self.detailsTableView.register(BGSummaryTVCell.self, forCellReuseIdentifier: "BGSummaryTVCell")
     }
 
     private func adjustHeaderHeight() {
@@ -174,9 +173,8 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell: BGSummaryTVCell = tableView.dequeueReusableCell(withIdentifier: "BGSummaryTVCell", for: indexPath) as! BGSummaryTVCell
-        var tempObj = paymentDetails[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BGSummaryTVCell", for: indexPath) as! BGSummaryTVCell
+        let payment = paymentDetails[indexPath.row]
         let rectShape = CAShapeLayer()
         rectShape.bounds = cell.indicatorLabel.frame
         rectShape.position = cell.indicatorLabel.center
@@ -186,15 +184,8 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         cell.indicatorLabel.layer.mask = rectShape
         cell.indicatorLabel.backgroundColor = indicatorColor
 
-        if selectedPaymentList == .thisPeriod {
-//            cell.contentLabel.text = tempObj.upcomingBookingDate
-        } else {
-//            cell.contentLabel.text = tempObj.payment
-        }
-        
-        cell.contentLabel.text = ""
-        
-        cell.summaryLabel.text = tempObj.clientFirstName + " " + tempObj.clientLastName
+        cell.contentLabel.text = payment.bookingDate
+        cell.summaryLabel.text = payment.clientFirstName + " " + payment.clientLastName
         
         return cell
     }
@@ -221,7 +212,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         let endpoint: Api
 
         switch selectedPaymentList {
-            case .booked: endpoint = Api.stylistsBookedPayments(params: [ "stylist_id": currentUserId() ])
+            case .booked: endpoint = Api.stylistsBookedPayments(params: [ "id": currentUserId() ])
             case .thisPeriod: endpoint = Api.payments(params: [ "id": currentUserId() ])
             case .nextPayDay: endpoint = Api.stylistsNextPaydayPayments(params: [ "id": currentUserId() ])
         }
