@@ -142,7 +142,7 @@ enum Api {
         case .becomeStylist(clientId: let _, params: let params):
             return params
         case .auth(email: let email, password: let password):
-            return ["email": email, "password": password, "role": "client"]
+            return ["email": email, "password": password, "role": "stylist"]
         case .forgot(email: let email):
             return ["email": email]
         case .services(type: let type):
