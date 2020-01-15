@@ -643,7 +643,7 @@
                                                 <constraint firstAttribute="height" constant="75" id="R6i-no-ERU"/>
                                             </constraints>
                                             <connections>
-                                                <action selector="NextDayButtonAction:" destination="i7c-UX-u6c" eventType="touchUpInside" id="702-P7-gE6"/>
+                                                <action selector="nextDayButtonAction:" destination="i7c-UX-u6c" eventType="touchUpInside" id="702-P7-gE6"/>
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="THIS PERIOD" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bX0-cF-gvD">

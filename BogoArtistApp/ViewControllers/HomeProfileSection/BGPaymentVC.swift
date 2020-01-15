@@ -118,6 +118,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
                             startAngle: CGFloat(130.0).toRadians(),
                             endAngle: CGFloat(50.0).toRadians(),
                             clockwise: true)
+
         baseCircleLayer.path = path.cgPath
         baseCircleLayer.lineWidth = 5
         baseCircleLayer.strokeColor = RGBA(r: 240, g: 240, b: 240, a: 1).cgColor
@@ -127,43 +128,39 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         let rect = CGRect(x: 0, y: 0, width: circleView.frame.size.width, height: circleView.frame.size.height)
 
         let demoView = BGCircularView(frame: rect)
-        switch type.hashValue {
-        case 0:
-            if !isNoDateIsThere{
-                if paymentDict.totalEarning != 0 {
-                    demoView.pathColor = RGBA(r: 123, g: 211, b: 55, a: 1)
-                    circleView.addSubview(demoView)
+
+        switch type {
+            case .thisPeriod:
+                if !isNoDateIsThere {
+                    if paymentDict.totalEarning != 0 {
+                        demoView.pathColor = RGBA(r: 123, g: 211, b: 55, a: 1)
+                        circleView.addSubview(demoView)
+                    }
+                } else {
+                    demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
                 }
-            }else{
-                demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-            }
-            
-            break
-        case 1:
-            if !isNoDateIsThere{
-                if paymentDict.totalUpcomingPayment != 0 {
-                    demoView.pathColor = RGBA(r: 245, g: 171, b: 97, a: 1)
-                    circleView.addSubview(demoView)
+
+            case .booked:
+                if !isNoDateIsThere {
+                    if paymentDict.totalUpcomingPayment != 0 {
+                        demoView.pathColor = RGBA(r: 245, g: 171, b: 97, a: 1)
+                        circleView.addSubview(demoView)
+                    }
+                } else {
+                    demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
                 }
-            }else{
-                demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-            }
-            
-            break
-        case 2:
-            if !isNoDateIsThere{
-                if payDays != 0 {
-                    demoView.pathColor = RGBA(r: 139, g: 137, b: 251, a: 1)
-                    demoView.endAngle = (20 * payDays) + 130
-                    circleView.addSubview(demoView)
+
+            case .nextPayDay:
+                if !isNoDateIsThere {
+                    if payDays != 0 {
+                        demoView.pathColor = RGBA(r: 139, g: 137, b: 251, a: 1)
+                        demoView.endAngle = (20 * payDays) + 130
+                        circleView.addSubview(demoView)
+                    }
+                } else {
+                    demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
                 }
-            }else{
-                demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-            }
-            break
-        default:
-            demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-            break
+
         }
     }
     
@@ -175,11 +172,14 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BGSummaryTVCell", for: indexPath) as! BGSummaryTVCell
         let payment = paymentDetails[indexPath.row]
+
         let rectShape = CAShapeLayer()
         rectShape.bounds = cell.indicatorLabel.frame
         rectShape.position = cell.indicatorLabel.center
         rectShape.path = UIBezierPath(roundedRect: cell.indicatorLabel.bounds, byRoundingCorners: [.bottomLeft , .topLeft], cornerRadii: CGSize(width: 5, height: 5)).cgPath
+
         setShadowview(newView: cell.summaryView)
+
         cell.selectionStyle = UITableViewCell.SelectionStyle.none
         cell.indicatorLabel.layer.mask = rectShape
         cell.indicatorLabel.backgroundColor = indicatorColor
@@ -202,7 +202,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         self.callApiForPayments()
     }
     
-    @IBAction func NextDayButtonAction(_ sender: UIButton) {
+    @IBAction func nextDayButtonAction(_ sender: UIButton) {
         indicatorColor = #colorLiteral(red: 0.5501134396, green: 0.5327460766, blue: 1, alpha: 1)
         selectedPaymentList = .nextPayDay
         self.callApiForPayments()
