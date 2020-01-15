@@ -42,8 +42,11 @@ enum Api {
 
          // payments
          pay(params: [String: Any]),
+         payments(params: [String: Any]),
+         stylistsBookedPayments(params: [String: Any]),
+         stylistsNextPaydayPayments(params: [String: Any]),
 
-         // payments
+         // reviews
          sendReview(params: [String: Any]),
 
          becomeStylist(clientId: Int, params: [String: Any]),
@@ -113,8 +116,12 @@ enum Api {
             return "stylists/available_stylists"
         case .messages, .sendMessage:
             return "messages"
-        case .pay:
+        case .pay, .payments:
             return "payments"
+        case .stylistsBookedPayments:
+            return "stylists/booked_payment_data"
+        case .stylistsNextPaydayPayments:
+            return "stylists/next_payday_payment_data"
         case .sendReview:
             return "reviews"
         case .message(id: let id), .deleteMessage(id: let id), .updateMessage(id: let id, params: _):
@@ -133,6 +140,9 @@ enum Api {
              .availableStylists(params: let params),
              .book(params: let params),
              .pay(params: let params),
+             .payments(params: let params),
+             .stylistsBookedPayments(params: let params),
+             .stylistsNextPaydayPayments(params: let params),
              .sendReview(params: let params),
              .addCard(params: let params),
              .addFavorite(params: let params),
@@ -166,7 +176,8 @@ enum Api {
         case .services, .serviceTypes, .schedules,
              .availabilities, .client, .booking, .notifications,
              .favorites, .upcomingBookings, .pastBookings,
-             .cards, .nearestServices, .availableStylists, .messages:
+             .cards, .nearestServices, .availableStylists, .messages,
+             .payments, .stylistsBookedPayments, .stylistsNextPaydayPayments:
             return .get
         case .clientUpdate, .startBooking, .completeBooking, .rejectBooking:
             return .put

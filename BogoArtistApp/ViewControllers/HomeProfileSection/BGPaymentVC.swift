@@ -7,7 +7,7 @@
 import UIKit
 
 enum CircleType {
-    case period, booked, payDay
+    case thisPeriod, booked, nextPayDay
 }
 
 class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
@@ -21,18 +21,15 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var payDayLabel      : UILabel!
     
     var indicatorColor                  = UIColor()
-    var selectedData                    = "$35"
     var maxDateOfMonth                  = 0
-    var isFromUpcommingBooking          = false
-    var isFromcupocomingPeriod          = false
-    var isMainApiCalledForPayment       = false
+    var selectedPaymentList: CircleType = .thisPeriod
     var isNoDateIsThere                 = true
     var payDays                         = 0
     var isInitialLoading                = false
     var paymentDict                     = BGPaymentInfoModel()
-    var paymentDetails                  = [BGPaymentInfoModel]()
+    var paymentDetails                  = [BGPaymentInfo]()
     var newPayment                      = [BGPaymentInfoModel]()
-    
+
     @IBOutlet weak var headerViewTableHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet var rings: [NSLayoutConstraint]!
@@ -41,38 +38,32 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     // MARK: - UIViewController LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        if kWindowWidth == 320 {
-            
-            
-            if kWindowHeight < 500 {
-                
-                self.headerViewTableHeightConstraint.constant = 40
-                
-                for aRing in rings {
-                    
-                    aRing.constant = aRing.constant * 0.8
-                }
-            }
-            else {
-                
-                self.headerViewTableHeightConstraint.constant = 60
-            }
-        }
-        else if kWindowWidth == 375 {
-            
-            self.headerViewTableHeightConstraint.constant = 150
-        }
-        else {
-            self.headerViewTableHeightConstraint.constant = 240
-        }
-        
+
+        adjustHeaderHeight()
+
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
         
         self.detailsTableView.isHidden = true
-        
         self.detailsTableView.register(BGSummaryTVCell.self, forCellReuseIdentifier: "BGSummaryTVCell")
     }
-    
+
+    private func adjustHeaderHeight() {
+        if kWindowWidth == 320 {
+            if kWindowHeight < 500 {
+                self.headerViewTableHeightConstraint.constant = 40
+                for aRing in rings {
+                    aRing.constant = aRing.constant * 0.8
+                }
+            } else {
+                self.headerViewTableHeightConstraint.constant = 60
+            }
+        } else if kWindowWidth == 375 {
+            self.headerViewTableHeightConstraint.constant = 150
+        } else {
+            self.headerViewTableHeightConstraint.constant = 240
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(true)
@@ -93,15 +84,16 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
             // Fallback on earlier versions
         } //change year it will no of days in a year , change it to month it will give no of days in a current month
         // Compute difference in days:
-        
+
         if weekday == 1 || weekday == 15 {
             payDays = 0
-        }else if weekday! > 1 && weekday! < 15{
+        } else if weekday! > 1 && weekday! < 15 {
             payDays = 15 - weekday!
-        }else if weekday! > 15 && weekday! <= maxDateOfMonth{
+        } else if weekday! > 15 && weekday! <= maxDateOfMonth {
             payDays = (maxDateOfMonth + 1) - weekday!
         }
-        callApiForPayment()
+
+        callApiForPayments()
     }
     
     func setUpCircleData() {
@@ -113,9 +105,9 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         }
         payDayLabel.text = "\(payDays)" + " Days"
         
-        drawBaseCircle(circleView: ring1, type: .period)
+        drawBaseCircle(circleView: ring1, type: .thisPeriod)
         drawBaseCircle(circleView: ring2, type: .booked)
-        drawBaseCircle(circleView: ring3, type: .payDay)
+        drawBaseCircle(circleView: ring3, type: .nextPayDay)
     }
     
     func drawBaseCircle(circleView: UIView, type: CircleType) {
@@ -132,11 +124,10 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         baseCircleLayer.strokeColor = RGBA(r: 240, g: 240, b: 240, a: 1).cgColor
         baseCircleLayer.fillColor = UIColor.clear.cgColor
         circleView.layer.addSublayer(baseCircleLayer)
-        
-        let demoView = BGCircularView(frame: CGRect(x: 0,
-                                                    y: 0,
-                                                    width: circleView.frame.size.width,
-                                                    height: circleView.frame.size.height))
+
+        let rect = CGRect(x: 0, y: 0, width: circleView.frame.size.width, height: circleView.frame.size.height)
+
+        let demoView = BGCircularView(frame: rect)
         switch type.hashValue {
         case 0:
             if !isNoDateIsThere{
@@ -179,15 +170,13 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - UITableView Delegate and DataSource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return paymentDetails.count
+        paymentDetails.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: BGSummaryTVCell = tableView.dequeueReusableCell(withIdentifier: "BGSummaryTVCell", for: indexPath) as! BGSummaryTVCell
-        var tempObj = BGPaymentInfoModel()
-        tempObj = paymentDetails[indexPath.row]
+        var tempObj = paymentDetails[indexPath.row]
         let rectShape = CAShapeLayer()
         rectShape.bounds = cell.indicatorLabel.frame
         rectShape.position = cell.indicatorLabel.center
@@ -196,121 +185,53 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         cell.selectionStyle = UITableViewCell.SelectionStyle.none
         cell.indicatorLabel.layer.mask = rectShape
         cell.indicatorLabel.backgroundColor = indicatorColor
-        if !self.isMainApiCalledForPayment{
-            cell.contentLabel.text = tempObj.upcomingBookingDate
-            cell.summaryLabel.text = tempObj.upcomingFullName
-        }else{
-            cell.contentLabel.text = tempObj.payment
-            cell.summaryLabel.text = tempObj.firstName + " " + tempObj.lastName
+
+        if selectedPaymentList == .thisPeriod {
+//            cell.contentLabel.text = tempObj.upcomingBookingDate
+        } else {
+//            cell.contentLabel.text = tempObj.payment
         }
+        
+        cell.contentLabel.text = ""
+        
+        cell.summaryLabel.text = tempObj.clientFirstName + " " + tempObj.clientLastName
+        
         return cell
     }
     
     // MARK: - UIButton Actions
     @IBAction func periodButtonAction(_ sender: UIButton) {
-        
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
-        selectedData = "\(self.paymentDict.totalEarning)"//String(self.paymentDict.totalEarning)
-        isFromUpcommingBooking = false
-        isFromcupocomingPeriod = false
-        isMainApiCalledForPayment = true
+        selectedPaymentList = .thisPeriod
     }
     
     @IBAction func bookedButtonAction(_ sender: UIButton) {
-        
         indicatorColor = #colorLiteral(red: 0.9577540755, green: 0.6775102019, blue: 0.3479132652, alpha: 1)
-        isFromUpcommingBooking = true
-        isFromcupocomingPeriod = false
-        self.isMainApiCalledForPayment = false
-        self.callApiBookedPayment()
-        selectedData = "\(self.paymentDict.totalUpcomingPayment)"
+        selectedPaymentList = .booked
+        self.callApiForPayments()
     }
     
     @IBAction func NextDayButtonAction(_ sender: UIButton) {
-        
         indicatorColor = #colorLiteral(red: 0.5501134396, green: 0.5327460766, blue: 1, alpha: 1)
-        selectedData = "9/31/17"
-        isFromUpcommingBooking = false
-        isFromcupocomingPeriod = true
-        self.isMainApiCalledForPayment = false
-        self.callApiBookedPayment()
+        selectedPaymentList = .nextPayDay
+        self.callApiForPayments()
     }
-    
-    //MARK:- WebService Method
-    func callApiForPayment() {
-        
-        let dict = NSMutableDictionary()
-        dict[pArtistID] = USERDEFAULT.string(forKey: pArtistID)
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPIPayment, hudType: .simple) { (result, error, status) in
-            
-            if (error == nil) {
-                
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    if (Int(truncating: response.validatedValue("status", expected: NSInteger() as AnyObject) as! NSNumber) == 1) {
-                        
-                        self.isNoDateIsThere = false
-                        
-                        let data : Dictionary<String, AnyObject> = response.validatedValue("artistPayment", expected: Dictionary<String, AnyObject>() as AnyObject) as! Dictionary<String, AnyObject>
-                        
-                        self.paymentDict = BGPaymentInfoModel.getPaymentList(list: data as NSDictionary)
-                        
-                        let paymentDetails  = data.validatedValue("clientPaymentArr", expected: Array<Dictionary<String, AnyObject>>() as AnyObject) as! Array<Dictionary<String, AnyObject>>
-                        self.newPayment = BGPaymentInfoModel.getUpcomingBookingDetail(responseArray: paymentDetails as! Array<Dictionary<String, String>>)
-                        if self.isMainApiCalledForPayment{
-                            self.detailsTableView.isHidden = false
-                            self.detailsTableView.reloadData()
-                        }
-                        
-                        if !self.isInitialLoading {
-                            self.setUpCircleData()
-                        }
-                    }else{
-                        self.isNoDateIsThere = true
-                        _ = response.validatedValue("message", expected: "" as AnyObject) as! String
-                        self.setUpCircleData()
-                    }
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
+
+    func callApiForPayments() {
+        let endpoint: Api
+
+        switch selectedPaymentList {
+            case .booked: endpoint = Api.stylistsBookedPayments(params: [ "stylist_id": currentUserId() ])
+            case .thisPeriod: endpoint = Api.payments(params: [ "id": currentUserId() ])
+            case .nextPayDay: endpoint = Api.stylistsNextPaydayPayments(params: [ "id": currentUserId() ])
         }
-    }
-    
-    func callApiBookedPayment() {
-        var localApiType = ""
-        if isFromUpcommingBooking{
-            localApiType = kBookedPayment
-        }else if isFromcupocomingPeriod{
-            localApiType = "artistPastWeekPayment"
-            
-        }else{
-            localApiType = "artistPayment"
-        }
-        let dict = NSMutableDictionary()
-        dict[pArtistID] = USERDEFAULT.string(forKey: pArtistID)
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: localApiType, hudType: .simple) { (result, error, status) in
-            if (error == nil) {
-                if let response = result as? Dictionary<String, AnyObject> {
-                    self.detailsTableView.isHidden = false
-                    
-                    if (Int(truncating: response.validatedValue("status", expected: NSInteger() as AnyObject) as! NSNumber) == 1) {
-                        let dataArray = response.validatedValue(kDataSchedule, expected: [] as AnyObject)
-                        self.paymentDetails = BGPaymentInfoModel.getPaymentDetails(responseArray: dataArray as! Array<Dictionary<String, String>>)
-                        self.detailsTableView.reloadData()
-                        
-                    }else{
-                        AlertController.alert(message: response.validatedValue("message", expected: "" as AnyObject) as! String)
-                    }
-                }else{
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
-        }
+
+        Api.requestMappableArray(endpoint, success: {
+            (payments: [BGPaymentInfo]) -> Void in
+            self.detailsTableView.isHidden = false
+            self.paymentDetails = payments
+            self.detailsTableView.reloadData()
+        })
     }
 }
 
