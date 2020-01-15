@@ -15,15 +15,14 @@ extension Api: URLRequestConvertible {
     private static let baseURL = "https://bogo-staging.herokuapp.com/api/v1/"
     
     private func encodeParams(req: URLRequest) throws -> URLRequest {
+        if req.httpMethod == "GET" || req.httpMethod == "DELETE" {
+            return try URLEncoding.default.encode(req, with: params)
+        }
+
         switch self {
         case .signup, .client, .clientUpdate:
             return req
-        case .services, .schedules, .availabilities, .notifications,
-             .favorites, .upcomingBookings, .pastBookings, .nearestServices,
-             .availableStylists, .messages,
-             .booking, .deleteCard, .message, .deleteMessage, .cancelBooking, .removeFavorite,
-             .serviceTypes, .cards:
-            return try URLEncoding.default.encode(req, with: params)
+
         case .becomeStylist:
             return try URLEncoding.httpBody.encode(req, with: params)
         case .availableStylists, .messages:

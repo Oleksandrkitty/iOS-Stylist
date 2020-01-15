@@ -27,7 +27,7 @@ class BGChatViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var stylistId: String?
 
     var bookingId = ""
-    var clientId = "" // currently is not used. was used before API update
+    var clientId = ""
 
     var messageArray = ["What's goin on"]
     var messageString = ""
@@ -73,12 +73,12 @@ class BGChatViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // self.dateLabel.text = "\(booking.bookingDate) @ \(booking.bookingTime)"
         
         //Pull Down Refreshment
-        refreshControl .addTarget(self, action: #selector(BGChatViewController.refresh), for: UIControl.Event.valueChanged)
-        if #available(iOS 10.0, *) {
-            chatTableView.refreshControl = refreshControl
-        } else {
-            chatTableView.addSubview(refreshControl)
-        }
+//        refreshControl .addTarget(self, action: #selector(BGChatViewController.refresh), for: UIControl.Event.valueChanged)
+//        if #available(iOS 10.0, *) {
+//            chatTableView.refreshControl = refreshControl
+//        } else {
+//            chatTableView.addSubview(refreshControl)
+//        }
         //notifiacation to manage keyboard
         //APPDELEGATE.threadId = isFromNotification ? bookingID : userInfoObj.bookingID
         APPDELEGATE.isChatOnTop = true
@@ -92,7 +92,6 @@ class BGChatViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     @objc func refresh(_ sender: Any) {
         callWebApiToGetChatHistory()
-        refreshControl.endRefreshing()
     }
     
     @objc func tapOnTable(){
@@ -191,9 +190,9 @@ class BGChatViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let params = [
             "messages": [
                 "booking_id": bookingId,
-                "client_id": currentUserId(),
-                "stylist_id": stylistId ?? String(stylist?.id ?? 0),
-                "text": messageTextView.text
+                "client_id": clientId,
+                "stylist_id": currentUserId(),
+                "text": messageTextView.text ?? "" // ?? is required to unwrap optional. passing optional value to Alamofire will lead to crash
             ]
         ]
 
