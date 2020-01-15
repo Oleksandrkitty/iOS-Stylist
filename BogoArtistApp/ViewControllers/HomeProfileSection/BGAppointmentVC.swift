@@ -55,11 +55,11 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
         
         if isFromNotification {
             
-            self.callApiForbookingDetail()
+            self.callApiForBookingDetail()
         }
         else {
             
-            self.callApiForbookingDetail()
+            self.callApiForBookingDetail()
             isFromInitialLoad = true
             self.initialMethod()
         }
@@ -200,7 +200,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     @objc func reloadApi(notification: Notification)  {
         if let info = notification.userInfo as? Dictionary<String,String> {
             booking.id = Int(info["msgClId"] ?? "") ?? 0
-            self.callApiForbookingDetail()
+            self.callApiForBookingDetail()
         }
     }
     
@@ -381,7 +381,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
         }
     }
     
-    func callApiForbookingDetail() {
+    func callApiForBookingDetail() {
         let bookingId = bookingIDFromNotification != "" ? (Int(bookingIDFromNotification) ?? 0) : booking.id
         
         Api.requestMappable(Api.booking(id: bookingId), success: {
