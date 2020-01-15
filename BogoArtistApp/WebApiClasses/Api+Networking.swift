@@ -53,7 +53,8 @@ extension Api {
     
     static func requestJSON(_ endpoint: Api, showDialog: Bool = true, success: @escaping (Any) -> Void, failure: ((Error) -> Void)? = nil) {
         switchNetworkIndicator(show: true, useDialog: showDialog)
-        Alamofire.request(endpoint).validate().responseJSON { response in
+        let request = Alamofire.request(endpoint)
+        request.validate().responseJSON { response in
             switchNetworkIndicator(show: false, useDialog: showDialog)
             handle(response: response, success: success, failure: failure)
         }

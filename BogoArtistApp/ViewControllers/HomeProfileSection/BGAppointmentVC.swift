@@ -37,16 +37,17 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     var isFromInitialLoad = false
     var clientId = String()
     var bookingIDFromNotification = ""
-    var isFromCancelBooking                         = true
-    var bookingComplete                             = false
-    var completeBookingToSend = false
-    
+
     private var timer : Timer! = nil
     
     @IBOutlet weak var serviceTypeBoxHeight: NSLayoutConstraint!
     @IBOutlet weak var serviceBoxHeight: NSLayoutConstraint!
     @IBOutlet weak var height: NSLayoutConstraint!
-    //MARK:- =============Viewlife Cycle Methods==============================
+
+    func status() -> BookingStatus {
+        BookingStatus(rawValue: self.booking.status) ?? .pending
+    }
+
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -138,9 +139,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        if completeBookingToSend {
-            
+        if status() == .completed {
             self.startBookingBtn.isHidden = true
             self.contactBtn.isHidden = true
             self.cancelBookingBtn.isHidden = true
@@ -212,18 +211,14 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     }
     
     @IBAction func startBookingAction(_ sender: Any) {
-        
-        self.isFromCancelBooking = false
-        if startBookingBtn.title(for: .normal) == "Complete Booking"{
-            bookingComplete = true
-        }else{
-            bookingComplete = false
+        switch status() {
+            case .pending: startBooking()
+            case .confirmed: completeBooking()
+            default: break
         }
-        self.callApiForFetchStartBookingBooking()
     }
     
     @IBAction func contactAction(_ sender: UIButton) {
-        
         let actionSheet = UIActionSheet(title: "", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Send a Message","Call" )
         actionSheet.show(in: self.view)
     }
@@ -231,9 +226,7 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
     @IBAction func cancelBookingAction(_ sender: Any) {
         AlertController.alert(title: "", message: "Are you sure to cancel this booking?", buttons: ["Cancel","Ok"]) { (alert, i) in
             if i == 1{
-                self.isFromCancelBooking = true
-                self.bookingComplete = false
-                self.callApiForFetchStartBookingBooking()
+                self.cancelBooking()
             }
         }
     }
@@ -346,102 +339,107 @@ class BGAppointmentVC: UIViewController,UIActionSheetDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    //MARK:- Webservice Method
-    func callApiForFetchStartBookingBooking() {
-        
-        let localApiName = bookingComplete ? "completeBooking" :  isFromCancelBooking ? "cancelBooking" :kAPIStartBooking
-        let dict = NSMutableDictionary()
-        dict[pBookingID] = booking.id
-        if bookingComplete {
-            dict[pUserType] = "client"
-            completeBookingToSend = true
-        } else if isFromCancelBooking {
-            dict[pUserType] = "client"
-        }
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: localApiName, hudType: .simple) {
-            (result, error, status) in
+    func startBooking() {
+        Api.requestJSON(.startBooking(id: booking.id), success: {
+            response in
 
-            self.bookingComplete = true
-            if localApiName == kAPIStartBooking {
-                self.cancelBookingBtn.isHidden = true
-            } else {
-                self.cancelBookingBtn.isHidden = true
-            }
+            self.cancelBookingBtn.isHidden = true
+            self.startBookingBtn.setTitle("Complete Booking", for: .normal)
+
+            NotificationCenter.default.post(name: Notification.Name("dissmissBooking"), object: nil)
+            self.booking.status = BookingStatus.confirmed.rawValue
+        
+            self.update()
+//            self.callApiForBookingDetail()
+        })
+    }
+
+    func completeBooking() {
+        Api.requestJSON(.completeBooking(id: booking.id), success: {
+            response in
+
+            self.cancelBookingBtn.isHidden = true
 
             self.startBookingBtn.setTitle("Complete Booking", for: .normal)
             NotificationCenter.default.post(name: Notification.Name("dissmissBooking"), object: nil)
 
-            if localApiName == "completeBooking" {
-                self.navigationController?.popViewController(animated: false)
-                self.dismiss(animated: false, completion: nil)
-
-            } else if self.isFromCancelBooking {
-                self.dismiss(animated: false, completion: nil)
-            }
-        }
+            self.booking.status = BookingStatus.completed.rawValue
+                
+            self.update()
+//            self.callApiForBookingDetail()
+//            self.navigationController?.popViewController(animated: false)
+//            self.dismiss(animated: false, completion: nil)
+        })
     }
-    
+
+    func cancelBooking() {
+        Api.requestJSON(.rejectBooking(id: booking.id), success: {
+            response in self.callApiForBookingDetail()
+        })
+    }
+
     func callApiForBookingDetail() {
         let bookingId = bookingIDFromNotification != "" ? (Int(bookingIDFromNotification) ?? 0) : booking.id
         
         Api.requestMappable(Api.booking(id: bookingId), success: {
             (booking: BGBookingInfo) in
             self.booking = booking
+            self.update()
+        })
+    }
+    
+    func update() {
+        switch self.status() {
+            case .rejected:
+                AlertController.alert(title: "Your Appointment has been cancelled.")
+                self.dismiss(animated: false, completion: nil)
 
-            switch self.booking.status {
-                case "cancel":
-                    AlertController.alert(title: "Your Appointment has been cancelled.")
-                    self.dismiss(animated: false, completion: nil)
+            case .confirmed:
+                self.startBookingBtn.setTitle("Complete Booking", for: .normal)
+                self.cancelBookingBtn.isHidden = true
 
-                case "start": 
-                    self.startBookingBtn.setTitle("Complete Booking", for: .normal)
-                    self.cancelBookingBtn.isHidden = true
-                    self.bookingComplete = true
+            case .pending:
+                self.startBookingBtn.setTitle("Start Booking", for: .normal)
+                self.startBookingBtn.isHidden = true
+                self.cancelBookingBtn.isHidden = false
+                self.manageTimes(self.timer)
 
-                case "pending": 
-                    self.startBookingBtn.setTitle("Start Booking", for: .normal)
-                    self.startBookingBtn.isHidden = true
-                    self.cancelBookingBtn.isHidden = false
-                    self.bookingComplete = false
-                    self.manageTimes(self.timer)
+            default:
+                self.startBookingBtn.isHidden = true
+                self.cancelBookingBtn.isHidden = true
+                self.contactBtn.isHidden = true
+        }
+                    
+                    
+        if (self.booking.serviceId == 3) {
 
-                default:
-                    self.startBookingBtn.isHidden = true
-                    self.cancelBookingBtn.isHidden = true
-                    self.contactBtn.isHidden = true
-            }
-                        
-                        
-            if (self.booking.serviceId == 3) {
+            self.serviceTypeName.text = "Hair & Makeup"
+            self.fServiceName.text = self.booking.serviceName
 
-                self.serviceTypeName.text = "Hair & Makeup"
+            self.serviceBoxHeight.constant = 52
+
+        } else {
+
+            if (self.booking.serviceId == 1) {
+
+                self.serviceTypeName.text = "Hair Only"
                 self.fServiceName.text = self.booking.serviceName
-
-                self.serviceBoxHeight.constant = 52
-
             } else {
 
-                if (self.booking.serviceId == 1) {
-
-                    self.serviceTypeName.text = "Hair Only"
-                    self.fServiceName.text = self.booking.serviceName
-                } else {
-
-                    self.serviceTypeName.text = "Makeup Only"
-                    self.fServiceName.text = self.booking.serviceName
-                }
-
-                self.sServiceName.isHidden = true
-                self.serviceBoxHeight.constant = 28
+                self.serviceTypeName.text = "Makeup Only"
+                self.fServiceName.text = self.booking.serviceName
             }
 
-            self.serviceTypeBoxHeight.constant = 28
-            self.height.constant = self.height.constant + self.serviceBoxHeight.constant + self.serviceTypeBoxHeight.constant
-            self.scrollView.contentSize = CGSize(width: kWindowWidth, height: self.height.constant)
-            setShadowview(newView: self.serviceTypeBox)
-            setShadowview(newView: self.serviceBox)
-            self.initialMethod()
-        })
+            self.sServiceName.isHidden = true
+            self.serviceBoxHeight.constant = 28
+        }
+
+        self.serviceTypeBoxHeight.constant = 28
+        self.height.constant = self.height.constant + self.serviceBoxHeight.constant + self.serviceTypeBoxHeight.constant
+        self.scrollView.contentSize = CGSize(width: kWindowWidth, height: self.height.constant)
+        setShadowview(newView: self.serviceTypeBox)
+        setShadowview(newView: self.serviceBox)
+        self.initialMethod()
     }
     
     

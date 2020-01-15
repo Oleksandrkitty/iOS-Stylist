@@ -33,6 +33,9 @@ enum Api {
          // booking
          book(params: [String: Any]),
          booking(id: Int),
+         startBooking(id: Int),
+         completeBooking(id: Int),
+         rejectBooking(id: Int),
          cancelBooking(id: Int),
          pastBookings(clientId: String),
          upcomingBookings,
@@ -98,6 +101,12 @@ enum Api {
             return "favorites/\(id)"
         case .booking(id: let id):
             return "bookings/\(id)"
+        case .startBooking(id: let id):
+            return "bookings/\(id)/confirm"
+        case .completeBooking(id: let id):
+            return "bookings/\(id)/complete"
+        case .rejectBooking(id: let id):
+            return "bookings/\(id)/reject"
         case .cancelBooking(id: let id):
             return "bookings/\(id)"
         case .availableStylists:
@@ -147,7 +156,7 @@ enum Api {
             return ["client_id": id]
         case .help(message: let message):
             return ["contacts":["message": message]]
-        case .serviceTypes, .cards, .upcomingBookings:
+        case .serviceTypes, .cards, .upcomingBookings, .startBooking, .completeBooking, .rejectBooking:
             return nil
         }
     }
@@ -159,7 +168,7 @@ enum Api {
              .favorites, .upcomingBookings, .pastBookings,
              .cards, .nearestServices, .availableStylists, .messages:
             return .get
-        case .clientUpdate:
+        case .clientUpdate, .startBooking, .completeBooking, .rejectBooking:
             return .put
         case .deleteCard, .deleteMessage, .cancelBooking, .removeFavorite:
             return .delete
