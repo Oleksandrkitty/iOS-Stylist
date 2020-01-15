@@ -19,7 +19,10 @@ extension Api: URLRequestConvertible {
         case .signup, .client, .clientUpdate:
             return req
         case .services, .schedules, .availabilities, .notifications,
-             .favorites, .upcomingBookings, .pastBookings, .nearestServices:
+             .favorites, .upcomingBookings, .pastBookings, .nearestServices,
+             .availableStylists, .messages,
+             .booking, .deleteCard, .message, .deleteMessage, .cancelBooking, .removeFavorite,
+             .serviceTypes, .cards:
             return try URLEncoding.default.encode(req, with: params)
         case .becomeStylist:
             return try URLEncoding.httpBody.encode(req, with: params)
