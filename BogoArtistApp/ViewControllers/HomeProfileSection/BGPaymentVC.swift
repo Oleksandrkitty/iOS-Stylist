@@ -23,7 +23,6 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     var indicatorColor                  = UIColor()
     var maxDateOfMonth                  = 0
     var selectedPaymentList: CircleType = .thisPeriod
-    var payDays                         = 0
     var isInitialLoading                = false
     var paymentDetails                  = [BGPaymentInfo]()
 
@@ -41,8 +40,6 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
         
         detailsTableView.isHidden = true
-
-        setUpCircleData()
     }
 
     private func adjustHeaderHeight() {
@@ -66,32 +63,9 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         
         super.viewWillAppear(true)
         
-        let calendar = Calendar.current
-        let date = Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        
-        let components = calendar.dateComponents([.year, .month, .day], from: date)
-        let weekday = components.day
-        
-        // Calculate start and end of the current year (or month with `.month`):
-        if #available(iOS 10.0, *) {
-            let interval = calendar.dateInterval(of: .month, for: date)!
-            maxDateOfMonth = calendar.dateComponents([.day], from: interval.start, to: interval.end).day!
-        } else {
-            // Fallback on earlier versions
-        } //change year it will no of days in a year , change it to month it will give no of days in a current month
-        // Compute difference in days:
-
-        if weekday == 1 || weekday == 15 {
-            payDays = 0
-        } else if weekday! > 1 && weekday! < 15 {
-            payDays = 15 - weekday!
-        } else if weekday! > 15 && weekday! <= maxDateOfMonth {
-            payDays = (maxDateOfMonth + 1) - weekday!
-        }
-
         callApiForPayments()
+
+        setUpCircleData()
     }
     
     func setUpCircleData() {
@@ -113,16 +87,45 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
             self.bookedLabel.text = "$" + "\(earnings)"
         })
 
-//        if isNoDateIsThere {
-            payDays = 0 
-//        }
+        let payDays = getPayDaysRemaining()
         payDayLabel.text = "\(payDays)" + " Days"
         
         drawBaseCircle(circleView: ring1, type: .thisPeriod)
         drawBaseCircle(circleView: ring2, type: .booked)
         drawBaseCircle(circleView: ring3, type: .nextPayDay)
     }
-    
+
+    private func getPayDaysRemaining() -> Int {
+        var payDays = 0
+
+        let calendar = Calendar.current
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let weekday = components.day
+
+        // Calculate start and end of the current year (or month with `.month`):
+        if #available(iOS 10.0, *) {
+            let interval = calendar.dateInterval(of: .month, for: date)!
+            maxDateOfMonth = calendar.dateComponents([.day], from: interval.start, to: interval.end).day!
+        } else {
+            // Fallback on earlier versions
+        } //change year it will no of days in a year , change it to month it will give no of days in a current month
+        // Compute difference in days:
+
+        if weekday == 1 || weekday == 15 {
+            payDays = 0
+        } else if weekday! > 1 && weekday! < 15 {
+            payDays = 15 - weekday!
+        } else if weekday! > 15 && weekday! <= maxDateOfMonth {
+            payDays = (maxDateOfMonth + 1) - weekday!
+        }
+        return payDays
+    }
+
     func drawBaseCircle(circleView: UIView, type: CircleType) {
         var path: UIBezierPath!
         let baseCircleLayer = CAShapeLayer()
@@ -160,6 +163,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
 //                }
 
             case .nextPayDay:
+                let payDays = getPayDaysRemaining()
 //                    if payDays != 0 {
 //                        demoView.pathColor = RGBA(r: 139, g: 137, b: 251, a: 1)
                         demoView.endAngle = (20 * payDays) + 130
