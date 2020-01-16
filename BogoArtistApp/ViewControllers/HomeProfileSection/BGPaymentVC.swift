@@ -195,6 +195,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     @IBAction func periodButtonAction(_ sender: UIButton) {
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
         selectedPaymentList = .thisPeriod
+        self.callApiForPayments()
     }
     
     @IBAction func bookedButtonAction(_ sender: UIButton) {
@@ -210,20 +211,26 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     }
 
     func callApiForPayments() {
-        let endpoint: Api
+        let endpoint: Api?
 
         switch selectedPaymentList {
+            case .thisPeriod: endpoint = nil // payments/ are available only to admins Api.payments(params: [ "id": currentUserId() ])
             case .booked: endpoint = Api.stylistsBookedPayments(params: [ "id": currentUserId() ])
-            case .thisPeriod: endpoint = Api.payments(params: [ "id": currentUserId() ])
             case .nextPayDay: endpoint = Api.stylistsNextPaydayPayments(params: [ "id": currentUserId() ])
         }
 
-        Api.requestMappableArray(endpoint, success: {
-            (payments: [BGPaymentInfo]) -> Void in
+        if let endpoint = endpoint {
+            Api.requestMappableArray(endpoint, success: {
+                (payments: [BGPaymentInfo]) -> Void in
+                self.detailsTableView.isHidden = false
+                self.paymentDetails = payments
+                self.detailsTableView.reloadData()
+            })
+        } else {
             self.detailsTableView.isHidden = false
-            self.paymentDetails = payments
+            self.paymentDetails = []
             self.detailsTableView.reloadData()
-        })
+        }
     }
 }
 
