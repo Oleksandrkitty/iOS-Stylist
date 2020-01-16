@@ -284,28 +284,58 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
         }
     }
 
-    func topMarker(shouldDisplayOnDayView dayView: DayView) -> Bool {
-        
+    func supplementaryView(shouldDisplayOnDayView dayView: DayView) -> Bool {
         if (dayView.date != nil) {
-            
             if (dayView.date.convertedDate()! < self.startDateOne && !dayView.isCurrentDay) {
-                
                 return false
-            }
-            else {
-                
+            } else {
                 let str = self.stringFromDate(dayView.date) //dateFormatter.string(from: date!)
                 let (what, _) = self.hasSchedule(str)
                 return what
             }
-        }
-        else {
+        } else {
             return false
         }
     }
-    
-    
-    
+
+
+    func supplementaryView(viewOnDayView dayView: DayView) -> UIView {
+        dayView.setNeedsLayout()
+        dayView.layoutIfNeeded()
+
+        let π = Double.pi
+
+        let ringLayer = CAShapeLayer()
+        let ringLineWidth: CGFloat = 2.0
+        let ringLineColour = UIColor.white
+
+        let newView = UIView(frame: dayView.frame)
+
+        let diameter = (min(newView.bounds.width, newView.bounds.height)) * (2/3) // multiplaying by 2/3 to make circle take 2/3 of width or height
+        let radius = diameter / 2.0 - ringLineWidth
+
+        newView.layer.addSublayer(ringLayer)
+
+        ringLayer.fillColor = nil
+        ringLayer.lineWidth = ringLineWidth
+        ringLayer.strokeColor = ringLineColour.cgColor
+
+        let centrePoint = CGPoint(x: newView.bounds.width/2.0, y: newView.bounds.height/2.0)
+        let startAngle = CGFloat(-π/2.0)
+        let endAngle = CGFloat(π * 2.0) + startAngle
+        let ringPath = UIBezierPath(arcCenter: centrePoint,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            clockwise: true)
+
+        ringLayer.path = ringPath.cgPath
+        ringLayer.frame = newView.layer.bounds
+
+        return newView
+    }
+
+
     public func stringFromDate(_ date:CVDate) -> String {
         
         let dateFormatter = DateFormatter()
