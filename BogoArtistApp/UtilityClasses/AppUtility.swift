@@ -32,6 +32,10 @@ func isUserLoggedIn() -> Bool {
     currentUser() != nil
 }
 
+func logOut() {
+    UserDefaults.standard.removeObject(forKey: kAuthToken)
+}
+
 var currentTimestamp: String {
     String(Date().timeIntervalSince1970)
 }

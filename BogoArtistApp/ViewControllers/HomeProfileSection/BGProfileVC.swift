@@ -328,7 +328,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             editDescriptionButton.isHidden = false
             callApiForUpdateProfile()
         } else {
-            USERDEFAULT.setValue("", forKey: pArtistID)
+            logOut()
             self.navigationController?.popToRootViewController(animated: true)
         }
     }
