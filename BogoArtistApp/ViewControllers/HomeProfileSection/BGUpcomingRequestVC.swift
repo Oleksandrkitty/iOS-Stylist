@@ -10,7 +10,8 @@ enum BGBookingGroupType {
     case today,
          tomorrow,
          yesterday,
-         other(date: String)
+         past,
+         future
 }
 
 class BGBookingGroupInfo {
@@ -151,8 +152,11 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
             case .tomorrow:
                 label.textColor = UIColor.lightGray
                 label.text = "Tomorrow"
-            case .other(date: let date):
-                label.text = date
+            case .future:
+                label.text = "Future"
+                label.textColor = UIColor.lightGray
+            case .past:
+                label.text = "Past"
                 label.textColor = UIColor.lightGray
         }
         
@@ -224,8 +228,42 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
     }
 
     private func groupAndFilterBookings(_ bookings: [BGBookingInfo]) -> [BGBookingGroupInfo] {
-        // todo implement actual grouping by days
-        let groups = [BGBookingGroupInfo(bookings: bookings, type: .today)]
+        var past = [BGBookingInfo]()
+        var yesterday = [BGBookingInfo]()
+        var today = [BGBookingInfo]()
+        var tomorrow = [BGBookingInfo]()
+        var future = [BGBookingInfo]()
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let now = Date()
+
+        for booking in bookings {
+            if let date = formatter.date(from: booking.date) {
+                if Calendar.current.isDateInToday(date) {
+                    today.append(booking)
+                } else
+                if Calendar.current.isDateInYesterday(date) {
+                    yesterday.append(booking)
+                } else
+                if Calendar.current.isDateInTomorrow(date) {
+                    tomorrow.append(booking)
+                } else if date < now {
+                    past.append(booking)
+                } else {
+                    future.append(booking)
+                }
+            }
+        }
+
+        let groups = [
+            BGBookingGroupInfo(bookings: today, type: .today),
+            BGBookingGroupInfo(bookings: tomorrow, type: .tomorrow),
+            BGBookingGroupInfo(bookings: yesterday, type: .yesterday),
+            BGBookingGroupInfo(bookings: future, type: .future),
+            BGBookingGroupInfo(bookings: past, type: .past),
+        ]
         return groups.filter { $0.bookings.count > 0 }
     }
 
