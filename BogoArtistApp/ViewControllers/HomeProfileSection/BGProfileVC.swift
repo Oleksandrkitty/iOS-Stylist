@@ -82,7 +82,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         starRatingView.allowsHalfStars = true
         
         DispatchQueue.main.async {
-            //self.descriptionTextView.delegate = self
+            self.descriptionTextView.delegate = self
             self.addSlantLayerToHeaderView()
             self.dummyPlaceholderImage = nil
             
@@ -190,7 +190,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         if textView.text.length == 0 {
             self.descriptionTextView.placeholder = "Describe yourself"
         }
-        stylist.description = textView.text!
+        stylist.description = descriptionTextView.text!
     }
 
     // MARK:- ==================UIImage Picker Delegate======================
@@ -436,6 +436,16 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     }
 
     func callApiForUpdateProfile() {
+        let params = [
+            "stylists": [
+                "description": stylist.description,
+            ]
+        ]
+        
+        Api.requestJSON(.updateStylist(id: stylist.id, params: params), success: {
+            response in
+        })
+        
         /*
         let newUserName = stylist.firstName + " " + stylist.lastName
 

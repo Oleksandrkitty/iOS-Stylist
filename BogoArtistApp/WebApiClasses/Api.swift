@@ -57,6 +57,7 @@ enum Api {
 
          // stylists
          stylist(id: Int),
+         updateStylist(id: Int, params: [String: Any]),
          becomeStylist(clientId: Int, params: [String: Any]),
 
          cards,
@@ -117,7 +118,7 @@ enum Api {
             return "favorites/\(id)"
         case .booking(id: let id):
             return "bookings/\(id)"
-        case .stylist(id: let id):
+        case .stylist(id: let id), .updateStylist(id: let id, params: _):
             return "stylists/\(id)"
         case .startBooking(id: let id):
             return "bookings/\(id)/confirm"
@@ -167,6 +168,8 @@ enum Api {
              .messages(params: let params),
              .sendMessage(params: let params):
             return params
+        case .updateStylist(id: let id, params: let params):
+            return params
         case .becomeStylist(clientId: let _, params: let params):
             return params
         case .auth(email: let email, password: let password):
@@ -198,6 +201,8 @@ enum Api {
             return .get
         case .clientUpdate, .startBooking, .completeBooking, .rejectBooking:
             return .put
+        case .updateStylist:
+            return .patch
         case .deleteCard, .deleteMessage, .cancelBooking, .removeFavorite, .removeScheduleByStylist:
             return .delete
         default:
