@@ -11,13 +11,13 @@ import ObjectMapper
 
 struct BGRatingInfo: Mappable {
     
-    var reviewCounts: Int = 0
+    var reviewCount: Int = 0
     var rating: Float = 0
     
     init?(map: Map) { }
     
     mutating func mapping(map: Map) {
-        reviewCounts <- map["count"]
+        reviewCount <- map["count"]
         rating <- map["rating"]
     }
 

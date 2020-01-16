@@ -37,7 +37,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var stylist = BGStylistInfo()
     var galleryID = [String]()
     var selectedImageViewTag = Int()
-    var subCategoryLisrArray = [BGGalleryInfo]()
+    var subCategoryListArray = [BGGalleryInfo]()
 
     @IBOutlet var reviewHeight: NSLayoutConstraint!
     @IBOutlet var rateHeight: NSLayoutConstraint!
@@ -121,14 +121,14 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
     // MARK: - UICollectionView Delegate and DataSource Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return subCategoryLisrArray.count
+        return subCategoryListArray.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BGProfileCVCell", for: indexPath) as! BGProfileCVCell
         cell.editButton.isHidden = false
         cell.crossButton.tag = indexPath.row  //setting button tag
-        let objGallery = subCategoryLisrArray[subCategoryLisrArray.count - 1 - indexPath.item]
+        let objGallery = subCategoryListArray[subCategoryListArray.count - 1 - indexPath.item]
         cell.crossButton.isHidden = !objGallery.isCorssShown
 
         if let image = objGallery.image as? UIImage {
@@ -214,9 +214,9 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                     objGalleryInfo.image = image
                     objGalleryInfo.isCorssShown = true
                     objGalleryInfo.isImageUpdated = true
-                    subCategoryLisrArray.append(objGalleryInfo)
+                    subCategoryListArray.append(objGalleryInfo)
                 } else {
-                    let galleryInfo = subCategoryLisrArray[subCategoryLisrArray.count - 1 - globalIndex]
+                    let galleryInfo = subCategoryListArray[subCategoryListArray.count - 1 - globalIndex]
                     galleryInfo.image = image as AnyObject
                     galleryInfo.isImageUpdated = true
                 }
@@ -275,7 +275,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
     @objc func crossImageAction(_ sender: UIButton) {
         showCrossImage = true
-        self.subCategoryLisrArray.remove(at: subCategoryLisrArray.count - sender.tag - 1)
+        self.subCategoryListArray.remove(at: subCategoryListArray.count - sender.tag - 1)
         self.imageCollectionView.reloadData()
     }
 
@@ -413,16 +413,12 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
             self.stylist = stylist
 
-            self.subCategoryLisrArray.removeAll()
+            self.subCategoryListArray.removeAll()
             self.isFirstTime = false
 
-            let rating = stylist.ratingInfo?.rating
-
-            let reviewCount = stylist.ratingInfo?.reviewCounts
-            
-            if let rating = rating, let reviewCount = reviewCount {
-                self.starRatingView.value = CGFloat(rating)
-                self.reviewLabel.text = "\(reviewCount) Review(s)"
+            if let rating = stylist.rating {
+                self.starRatingView.value = CGFloat(rating.rating)
+                self.reviewLabel.text = "\(rating.reviewCount) Review(s)"
 
                 self.rateHeight.constant = 12
                 self.reviewHeight.constant = 22

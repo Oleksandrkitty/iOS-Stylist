@@ -17,7 +17,6 @@ struct BGStylistInfo: Mappable, Equatable {
     var lat: String?
     var long: String?
     var image: String = ""
-    var ratingInfo: BGRatingInfo?
     var favorite: Bool = false
     var payments: String = ""
     var earnings: String = ""
@@ -44,7 +43,6 @@ struct BGStylistInfo: Mappable, Equatable {
         lat <- map["lat"]
         long <- map["long"]
         image <- map["image"]
-        ratingInfo <- map["reviews"]
         favorite <- map["is_favorite"]
         payments <- map["total_payments"]
         earnings <- map["total_earning"]
