@@ -81,7 +81,7 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
         
         let slot = self.slots[indexPath.row]
 
-        let is_booked = slot.scheduleId != nil
+        let is_booked = false
 
         if is_booked {
             cell.containerView.backgroundColor = #colorLiteral(red: 0.3071894348, green: 0.8093062043, blue: 0.7460683584, alpha: 1)
@@ -91,8 +91,8 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
             cell.timeLabel.textColor = UIColor.black
         }
         
-        let start = get12HourTime(fromTime: slot.timeFrom)
-        let end = get12HourTime(fromTime: slot.timeTo)
+        let start =  slot.timeFrom
+        let end = slot.timeTo
         
         cell.timeLabel.text = start + " - " + end
         
