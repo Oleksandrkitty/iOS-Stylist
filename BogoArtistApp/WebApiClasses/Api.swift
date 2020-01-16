@@ -49,7 +49,10 @@ enum Api {
          // reviews
          sendReview(params: [String: Any]),
 
+         // stylists
+         stylist(id: Int),
          becomeStylist(clientId: Int, params: [String: Any]),
+
          cards,
          addCard(params: [String: Any]),
          deleteCard(id: String),
@@ -104,6 +107,8 @@ enum Api {
             return "favorites/\(id)"
         case .booking(id: let id):
             return "bookings/\(id)"
+        case .stylist(id: let id):
+            return "stylists/\(id)"
         case .startBooking(id: let id):
             return "bookings/\(id)/confirm"
         case .completeBooking(id: let id):
@@ -159,14 +164,14 @@ enum Api {
             return ["service_type": type]
         case .nearestServices(type: let type, lat: let lat, long: let long):
             return ["service_type_id": type, "lat": lat, "long": long]
-        case .client, .booking, .deleteCard, .message, .deleteMessage, .cancelBooking, .removeFavorite:
             return [:]
         case .favorites(clientId: let id),
              .pastBookings(clientId: let id):
             return ["client_id": id]
         case .help(message: let message):
             return ["contacts":["message": message]]
-        case .serviceTypes, .cards, .upcomingBookings, .startBooking, .completeBooking, .rejectBooking:
+        case .client, .booking, .deleteCard, .message, .deleteMessage, .cancelBooking, .removeFavorite,
+             .serviceTypes, .cards, .upcomingBookings, .startBooking, .completeBooking, .rejectBooking, .stylist:
             return nil
         }
     }
@@ -174,7 +179,7 @@ enum Api {
     var method: HTTPMethod {
         switch self {
         case .services, .serviceTypes, .schedules,
-             .availabilities, .client, .booking, .notifications,
+             .availabilities, .client, .stylist, .booking, .notifications,
              .favorites, .upcomingBookings, .pastBookings,
              .cards, .nearestServices, .availableStylists, .messages,
              .payments, .stylistsBookedPayments, .stylistsNextPaydayPayments:
