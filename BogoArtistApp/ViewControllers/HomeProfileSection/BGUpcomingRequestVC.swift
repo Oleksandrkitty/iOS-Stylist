@@ -218,14 +218,15 @@ class BGUpcomingRequestVC: UIViewController,UITableViewDataSource,UITableViewDel
 
         Api.requestMappableArray(.upcomingBookings, success: {
             (bookings: [BGBookingInfo]) in
-            self.upcommingList = self.groupBookings(bookings)
+            self.upcommingList = self.groupAndFilterBookings(bookings)
             self.upComingtableView.reloadData()
         })
     }
 
-    private func groupBookings(_ bookings: [BGBookingInfo]) -> [BGBookingGroupInfo] {
+    private func groupAndFilterBookings(_ bookings: [BGBookingInfo]) -> [BGBookingGroupInfo] {
         // todo implement actual grouping by days
-        [BGBookingGroupInfo(bookings: bookings, type: .today)]
+        let groups = [BGBookingGroupInfo(bookings: bookings, type: .today)]
+        return groups.filter { $0.bookings.count > 0 }
     }
 
     override func didReceiveMemoryWarning() {
