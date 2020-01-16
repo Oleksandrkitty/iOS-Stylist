@@ -43,7 +43,9 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
 
         indicatorColor = #colorLiteral(red: 0.4853838682, green: 0.8248652816, blue: 0.1157580242, alpha: 1)
         
-        self.detailsTableView.isHidden = true
+        detailsTableView.isHidden = true
+
+        setUpCircleData()
     }
 
     private func adjustHeaderHeight() {
@@ -96,7 +98,6 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     }
     
     func setUpCircleData() {
-        
         periodLabel.text = "$" + "\(paymentDict.totalEarning)"
         bookedLabel.text = "$" + "\(paymentDict.totalUpcomingPayment)"
         if isNoDateIsThere{

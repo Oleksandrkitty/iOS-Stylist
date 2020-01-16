@@ -824,9 +824,9 @@
                         <outlet property="headerViewTableHeightConstraint" destination="7N8-6p-tue" id="KsQ-6J-QJq"/>
                         <outlet property="payDayLabel" destination="bSe-b3-aaO" id="R5I-p3-FNE"/>
                         <outlet property="periodLabel" destination="HhX-9L-VGt" id="KPC-Hu-Tp9"/>
-                        <outlet property="ring1" destination="wYA-TH-ZBy" id="eu6-Lp-Ydb"/>
-                        <outlet property="ring2" destination="0XH-sT-Hnn" id="lnR-F5-RlI"/>
-                        <outlet property="ring3" destination="bFY-OP-ghj" id="hMI-IV-BU4"/>
+                        <outlet property="ring1" destination="PWk-SN-7Bw" id="xb7-Op-2h2"/>
+                        <outlet property="ring2" destination="q2u-jq-4Wq" id="7wq-4R-5vy"/>
+                        <outlet property="ring3" destination="Lsi-jT-lq2" id="jNB-ML-dtQ"/>
                         <outletCollection property="rings" destination="5Xi-Ss-oSx" collectionClass="NSMutableArray" id="rQg-OO-tcH"/>
                         <outletCollection property="rings" destination="Sg3-m8-APG" collectionClass="NSMutableArray" id="11s-Sg-d8W"/>
                         <outletCollection property="rings" destination="EQO-Mg-TM9" collectionClass="NSMutableArray" id="s0x-Is-Mq2"/>
