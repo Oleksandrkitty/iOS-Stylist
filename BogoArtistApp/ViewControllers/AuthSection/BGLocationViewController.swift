@@ -39,9 +39,6 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
             }else{
                 isLocation = false
             }
-            let textfield = searchBar.value(forKey: "_searchField") as! UITextField
-            textfield.clearButtonMode = .never
-            textfield.isEnabled = false
             NotificationCenter.default.addObserver(self, selector: #selector(self.showSpinningWheel), name: NSNotification.Name(rawValue: "PostToPush"), object: nil)
             searchBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapOnSearchBar)))
             
