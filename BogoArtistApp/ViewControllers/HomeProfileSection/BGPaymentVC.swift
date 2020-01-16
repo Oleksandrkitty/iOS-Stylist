@@ -23,12 +23,9 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     var indicatorColor                  = UIColor()
     var maxDateOfMonth                  = 0
     var selectedPaymentList: CircleType = .thisPeriod
-    var isNoDateIsThere                 = true
     var payDays                         = 0
     var isInitialLoading                = false
-    var paymentDict                     = BGPaymentInfoModel()
     var paymentDetails                  = [BGPaymentInfo]()
-    var newPayment                      = [BGPaymentInfoModel]()
 
     @IBOutlet weak var headerViewTableHeightConstraint: NSLayoutConstraint!
     
@@ -116,9 +113,9 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
             self.bookedLabel.text = "$" + "\(earnings)"
         })
 
-        if isNoDateIsThere {
+//        if isNoDateIsThere {
             payDays = 0 
-        }
+//        }
         payDayLabel.text = "\(payDays)" + " Days"
         
         drawBaseCircle(circleView: ring1, type: .thisPeriod)
@@ -148,35 +145,29 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
 
         switch type {
             case .thisPeriod:
-                if !isNoDateIsThere {
-                    if paymentDict.totalEarning != 0 {
-                        demoView.pathColor = RGBA(r: 123, g: 211, b: 55, a: 1)
-                        circleView.addSubview(demoView)
-                    }
-                } else {
-                    demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-                }
+                demoView.pathColor = RGBA(r: 123, g: 211, b: 55, a: 1)
+                circleView.addSubview(demoView)
+//                } else {
+//                    demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
+//                }
 
             case .booked:
-                if !isNoDateIsThere {
-                    if paymentDict.totalUpcomingPayment != 0 {
-                        demoView.pathColor = RGBA(r: 245, g: 171, b: 97, a: 1)
-                        circleView.addSubview(demoView)
-                    }
-                } else {
+//                if paymentDict.totalUpcomingPayment != 0 {
+//                    demoView.pathColor = RGBA(r: 245, g: 171, b: 97, a: 1)
+                    circleView.addSubview(demoView)
+//                } else {
                     demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-                }
+//                }
 
             case .nextPayDay:
-                if !isNoDateIsThere {
-                    if payDays != 0 {
-                        demoView.pathColor = RGBA(r: 139, g: 137, b: 251, a: 1)
+//                    if payDays != 0 {
+//                        demoView.pathColor = RGBA(r: 139, g: 137, b: 251, a: 1)
                         demoView.endAngle = (20 * payDays) + 130
                         circleView.addSubview(demoView)
-                    }
-                } else {
+//                    }
+//                } else {
                     demoView.pathColor = RGBA(r: 240, g: 240, b: 240, a: 1)
-                }
+//                }
 
         }
     }
