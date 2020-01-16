@@ -145,6 +145,7 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
         let rect = CGRect(x: 0, y: 0, width: circleView.frame.size.width, height: circleView.frame.size.height)
 
         let demoView = BGCircularView(frame: rect)
+        demoView.isUserInteractionEnabled = false
 
         switch type {
             case .thisPeriod:
