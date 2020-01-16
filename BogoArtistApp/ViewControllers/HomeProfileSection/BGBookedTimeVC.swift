@@ -119,20 +119,17 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     @objc func cancelBooking(_ sender: UIButton) {
         
         let slot = self.slots[sender.tag]
-        let is_booked = slot.scheduleId != nil
+        let is_booked = false
         if is_booked  {
-            _ = AlertController.alert(title: "Oops!", message: "You can't delete a booked schedule.")
+            AlertController.alert(title: "Oops!", message: "You can't delete a booked schedule.")
         } else {
-            
             self.slots.remove(at: sender.tag)
             self.tableView.reloadData()
-            
             self.deleteSchedule(slot)
         }
     }
     
     @IBAction func addScheduleAction(_ sender: UIButton) {
-        
         let bookingDetailVC = storyBoardForName(name: "Main").instantiateViewController(withIdentifier: "BGBookedScheduleVC") as! BGBookedScheduleVC
         bookingDetailVC.selectedServiceIds = selectedServiceIds
         bookingDetailVC.dateFullToSend = fullDateString
@@ -147,41 +144,16 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
    
     //MARK:- WebService Method
     func deleteSchedule(_ slot: BGAvailableSlotInfo) {
+        let params = [
+            "stylist_id": currentUserId(),
+            "date": fullDateString,
+            "start_time": slot.timeFrom,
+        ]
         
-        let dict = NSMutableDictionary()
-        dict[pArtistID] = USERDEFAULT.value(forKey: pArtistID)
-        dict["date"] = fullDateString
-        dict["slot_id"] = slot.id
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kDeleteArtistSchedule, hudType: .simple) { (result, error, status) in
-            
-            if (error == nil) {
-                
-                if let response = result as? [String:Any] {
-                    
-                    print(response)
-                    
-                    let status = response["status"] as! Bool
-                    
-                    if status {
-                        
-                        NotificationCenter.default.post(name: Notification.Name("PostForSchedule"), object: nil)
-                        self.dismiss(animated: false, completion: nil)
-                    }
-                    else {
-                        
-                        _ = AlertController.alert(title: "", message: response["message"] as! String)
-                    }
-                }
-                else {
-                    
-                    _ = AlertController.alert(title: "", message: "Something went wrong.")
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-                
-            }
-        }
+        Api.requestJSON(.removeScheduleByStylist(params: params), success: {
+            result in
+            NotificationCenter.default.post(name: Notification.Name("PostForSchedule"), object: nil)
+            self.dismiss(animated: false, completion: nil)
+        })
     }
 }

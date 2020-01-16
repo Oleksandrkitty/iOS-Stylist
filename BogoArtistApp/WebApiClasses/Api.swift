@@ -22,6 +22,7 @@ enum Api {
          schedules(params: [String: Any]),
          schedulesByStylist(params: [String: Any]),
          addSchedules(params: [String: Any]),
+         removeScheduleByStylist(params: [String: Any]),
 
          availabilities(params: [String: Any]),
          client(id: Int),
@@ -86,6 +87,8 @@ enum Api {
             return "services/nearest_services"
         case  .schedules, .addSchedules:
             return "schedules"
+        case .removeScheduleByStylist:
+            return "schedules/by_stylist"
         case  .schedulesByStylist:
             return "schedules/by_stylist"
         case .availabilities:
@@ -149,6 +152,7 @@ enum Api {
              .schedules(params: let params),
              .schedulesByStylist(params: let params),
              .addSchedules(params: let params),
+             .removeScheduleByStylist(params: let params),
              .notifications(params: let params),
              .availabilities(params: let params),
              .availableStylists(params: let params),
@@ -194,7 +198,7 @@ enum Api {
             return .get
         case .clientUpdate, .startBooking, .completeBooking, .rejectBooking:
             return .put
-        case .deleteCard, .deleteMessage, .cancelBooking, .removeFavorite:
+        case .deleteCard, .deleteMessage, .cancelBooking, .removeFavorite, .removeScheduleByStylist:
             return .delete
         default:
             return .post
