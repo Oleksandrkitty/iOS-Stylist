@@ -21,6 +21,15 @@ struct BGStylistInfo: Mappable, Equatable {
     var favorite: Bool = false
     var payments: String = ""
     var earnings: String = ""
+    var latitude: String = ""
+    var longitude: String = ""
+    var description: String = ""
+    var cosmetologyLicense: Bool = false
+    var liabilityInsurance: Bool = false
+    var eligibilityDocument: Bool = false
+    var images: [BGGalleryInfo]?
+    var rating: BGRatingInfo?
+    var isFavorite: Bool = false
 
     init() {}
     
@@ -39,6 +48,16 @@ struct BGStylistInfo: Mappable, Equatable {
         favorite <- map["is_favorite"]
         payments <- map["total_payments"]
         earnings <- map["total_earning"]
+        latitude <- map["lat"]
+        longitude <- map["long"]
+        image <- map["image"]
+        description <- map["description"]
+        cosmetologyLicense <- map["cosmetology_license"]
+        liabilityInsurance <- map["liability_insurance"]
+        eligibilityDocument <- map["eligibility_document"]
+        images <- map["gallery_images"]
+        rating <- map["ratings"]
+        isFavorite <- map["is_favorite"]
     }
 
     static func == (lhs: BGStylistInfo, rhs: BGStylistInfo) -> Bool {

@@ -35,6 +35,7 @@ class BGUserInfoModal: NSObject {
      Method to parse upcomming data.
      */
     
+    /*
   class func getProfileData(list: Dictionary<String, AnyObject>) -> BGUserInfoModal{
         let obj = BGUserInfoModal()
         obj.firstName = list.validatedValue("arFname", expected: "" as AnyObject) as! String
@@ -48,6 +49,7 @@ class BGUserInfoModal: NSObject {
         obj.longitude = list.validatedValue("arLong", expected: "" as AnyObject) as! String
         return obj
     }
+    */
     
     class func getUpdatedProfileData(list: Dictionary<String, AnyObject>) -> BGUserInfoModal{
         let obj = BGUserInfoModal()
