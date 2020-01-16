@@ -17,7 +17,11 @@ enum Api {
          serviceTypes,
          services(type: Int),
          nearestServices(type: Int, lat: Double, long: Double),
+
+         // schedules
          schedules(params: [String: Any]),
+         schedulesByStylist(params: [String: Any]),
+
          availabilities(params: [String: Any]),
          client(id: Int),
          clientUpdate(id: Int, params: [String: Any]),
@@ -81,6 +85,8 @@ enum Api {
             return "services/nearest_services"
         case  .schedules:
             return "schedules"
+        case  .schedulesByStylist:
+            return "schedules/by_stylist"
         case .availabilities:
             return "availabilities"
         case .client(id: let id), .clientUpdate(id: let id, params: _):
@@ -140,6 +146,7 @@ enum Api {
              .clientUpdate(id: _, params: let params),
              .updateMessage(id: _, params: let params),
              .schedules(params: let params),
+             .schedulesByStylist(params: let params),
              .notifications(params: let params),
              .availabilities(params: let params),
              .availableStylists(params: let params),
@@ -178,7 +185,7 @@ enum Api {
 
     var method: HTTPMethod {
         switch self {
-        case .services, .serviceTypes, .schedules,
+        case .services, .serviceTypes, .schedules, .schedulesByStylist,
              .availabilities, .client, .stylist, .booking, .notifications,
              .favorites, .upcomingBookings, .pastBookings,
              .cards, .nearestServices, .availableStylists, .messages,

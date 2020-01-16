@@ -25,15 +25,12 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
     
     //Local Navigationcontroller Outlet
     var startDateOne                        = Date()
-    var schedulearray                       = [[String:Any]]()
-    
+
     var isFromeFirstTime                    = 0
     var currentCalendar                     : Calendar?
     
-    var schedules : [[String:Any]] = []
-    
-    
-    
+    var schedules : [BGScheduleInfo] = []
+
     @IBOutlet weak var selectLabel: UILabel!
     @IBOutlet weak var hairLabel: UILabel!
     @IBOutlet weak var makeupLabel: UILabel!
@@ -319,18 +316,18 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
     }
     
     
-    func hasSchedule(_ date:String) -> (Bool, [String:Any]) {
+    func hasSchedule(_ date:String) -> (Bool, BGScheduleInfo?) {
         
         for aSchedule in schedules {
             
-            let sDate = aSchedule["schedule_date"] as! String
+            let sDate = aSchedule.date
             
             if date == sDate {
                 
                 return (true, aSchedule)
             }
         }
-        return (false,[:])
+        return (false, nil)
     }
     
     
@@ -378,39 +375,36 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
      Call service for event Creation*/
     @objc func callApiForGetArtistSchedule() {
         
-        let dict = NSMutableDictionary()
-        dict[pArtistID] = USERDEFAULT.value(forKey: pArtistID)
-        dict[pMonth] = bgDate.month
-        dict[pYear] = bgDate.year
-        
-        //MBProgressHUD.showAdded(to: APPDELEGATE.window!, animated: true)
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kGetArtistSchedule, hudType: .smoothProgress) { (result, error, status) in
-            
-            //MBProgressHUD.hide(for: APPDELEGATE.window!, animated: true)
-            
-            if (error == nil) {
-                
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    let messageStatus = response.validatedValue(kMessageSchedule, expected: "" as AnyObject)
-                    if messageStatus as! String == pMeassagestatus {
-                        
-                        AlertController.alert(message: pMeassagestatus )
-                    }
-                    else {
-                        
-                        self.schedules = response.validatedValue(kDataSchedule, expected: [] as AnyObject) as! [[String : Any]]
-                        self.setupDefault()
-                    }
-                    
-                    self.calendarView.contentController.refreshPresentedMonth()
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
-        }
+        let params = [
+            "stylist_id": currentUserId(), 
+//            bgDate.month
+//            bgDate.year
+        ]
+
+        /*
+        let global = BGGlobal.globalObject
+        guard let id = global.service.id, !isUpdating else { return }
+        isUpdating = true
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: workingDate)
+        let month = calendar.component(.month, from: workingDate)
+        let lastDay = calendar.range(of: .day, in: .month, for: workingDate)?.last ?? 31
+
+        let params: [String:Any] = [
+            "service_ids": [id],
+            "lat": global.lat,
+            "long": global.lng,
+            "from_date": "\(year)-\(month)-1",
+            "to_date": "\(year)-\(month)-\(lastDay)"
+        ]
+        */
+
+        Api.requestMappableArray(.schedulesByStylist(params: params), success: {
+            (schedules: [BGScheduleInfo]) in
+            self.schedules = schedules
+            self.calendarView.contentController.refreshPresentedMonth()
+            self.setupDefault()
+        })
     }
     
     func changeService(withSwitch sSwitch:UISwitch) {

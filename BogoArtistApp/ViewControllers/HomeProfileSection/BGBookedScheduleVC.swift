@@ -32,7 +32,7 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
     
     
     
-    var slots : [[String:Any]] = []
+    var slots : [BGAvailableSlotInfo] = []
     
     private var availableSlots:[String] = []
 
@@ -185,25 +185,22 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
     func isSlotScheduled(_ timeSlot:Int) -> Bool {
         
         for aSlot in self.slots {
-            
-            let start = minuteStamp(fromTime: aSlot["slot_start_time"] as! String)
-            let end = minuteStamp(fromTime: aSlot["slot_end_time"] as! String)
+            let start = minuteStamp(fromTime: aSlot.timeFrom)
+            let end = minuteStamp(fromTime: aSlot.timeTo)
             
             if isStart {
-                
                 if timeSlot >= start && timeSlot < end {
                     
                     return true
                 }
-            }
-            else {
-                
+            } else {
                 if timeSlot > start && timeSlot < end {
                     
                     return true
                 }
             }
         }
+        
         return false
     }
     
@@ -245,11 +242,10 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
                 
                 for aSlot in self.slots {
                     
-                    let start = minuteStamp(fromTime: aSlot["slot_start_time"] as! String)
-                    let end = minuteStamp(fromTime: aSlot["slot_end_time"] as! String)
+                    let start = minuteStamp(fromTime: aSlot.timeFrom)
+                    let end = minuteStamp(fromTime: aSlot.timeTo)
                     
                     if (start > tStart && start < tEnd) || (end > tStart && end < tEnd) {
-                        
                         _ = AlertController.alert(title: "", message: "New schedule is overlapping another schedule.")
                         return
                     }

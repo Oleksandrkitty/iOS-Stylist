@@ -22,10 +22,8 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     var bookedSlotString                = ""
     var fullDateString                  = ""
     
-    
-    
-    var schedule : [String:Any] = [:]
-    private var slots : [[String:Any]] = []
+    var schedule: BGScheduleInfo?
+    var slots: [BGAvailableSlotInfo] = []
    
     @IBOutlet weak var topMargin: NSLayoutConstraint!
     @IBOutlet weak var tableHeight: NSLayoutConstraint!
@@ -38,9 +36,10 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
         super.viewDidLoad()
         
         
-        if let slots = schedule["slots"] as? [[String:Any]] {
-            
+        if let slots = schedule?.slots  {
             self.slots = slots
+        } else {
+            self.slots = []
         }
         
         self.dayLabel.text = dayname
@@ -76,28 +75,24 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell: BGBookedTimeCell = tableView.dequeueReusableCell(withIdentifier: "BGBookedTimeCell", for: indexPath) as! BGBookedTimeCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BGBookedTimeCell", for: indexPath) as! BGBookedTimeCell
         cell.crossAction.tag = indexPath.row
         cell.crossAction.addTarget(self, action: #selector(cancelBooking(_:)), for: .touchUpInside)
         
         let slot = self.slots[indexPath.row]
-        
-        let is_booked = slot["is_booked"] as! String
-        
-        if is_booked == "true" {
-            
+
+        let is_booked = slot.scheduleId != nil
+
+        if is_booked {
             cell.containerView.backgroundColor = #colorLiteral(red: 0.3071894348, green: 0.8093062043, blue: 0.7460683584, alpha: 1)
             cell.timeLabel.textColor = UIColor.white
-        }
-        else {
-            
+        } else {
             cell.containerView.backgroundColor = UIColor.white
             cell.timeLabel.textColor = UIColor.black
         }
         
-        let start = get12HourTime(fromTime: slot["slot_start_time"] as! String)
-        let end = get12HourTime(fromTime: slot["slot_end_time"] as! String)
+        let start = get12HourTime(fromTime: slot.timeFrom)
+        let end = get12HourTime(fromTime: slot.timeTo)
         
         cell.timeLabel.text = start + " - " + end
         
@@ -123,12 +118,10 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     @objc func cancelBooking(_ sender: UIButton) {
         
         let slot = self.slots[sender.tag]
-        let is_booked = slot["is_booked"] as! String
-        if is_booked == "true" {
-            
+        let is_booked = slot.scheduleId != nil
+        if is_booked  {
             _ = AlertController.alert(title: "Oops!", message: "You can't delete a booked schedule.")
-        }
-        else {
+        } else {
             
             self.slots.remove(at: sender.tag)
             self.tableView.reloadData()
@@ -151,12 +144,12 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     }
    
     //MARK:- WebService Method
-    func deleteSchedule(_ slot:[String:Any]) {
+    func deleteSchedule(_ slot: BGAvailableSlotInfo) {
         
         let dict = NSMutableDictionary()
         dict[pArtistID] = USERDEFAULT.value(forKey: pArtistID)
         dict["date"] = fullDateString
-        dict["slot_id"] = slot["slot_id"]
+        dict["slot_id"] = slot.id
         
         ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kDeleteArtistSchedule, hudType: .simple) { (result, error, status) in
             

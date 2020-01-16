@@ -9,13 +9,14 @@
 import Foundation
 import ObjectMapper
 
-struct BGScheduleInfo: Mappable, Equatable {
-    
+struct BGScheduleInfo: Mappable {
+
     var id: Int = -1
     var stylistId: Int = -1
     var serviceIds: [Int] = []
     var date: String = ""
-    
+    var slots: [BGAvailableSlotInfo] = []
+
     init?(map: Map) {}
     
     mutating func mapping(map: Map) {
@@ -23,6 +24,7 @@ struct BGScheduleInfo: Mappable, Equatable {
         stylistId <- map["stylist_id"]
         serviceIds <- map["service_ids"]
         date <- map["date"]
+        slots <- map["stylist_schedules"]
     }
 
 }

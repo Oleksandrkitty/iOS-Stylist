@@ -12,7 +12,7 @@ import ObjectMapper
 struct BGAvailableSlotInfo: Mappable {
     
     var id: Int = -1
-    var scheduleId: Int = -1
+    var scheduleId: Int?
     var timeFrom: String = ""
     var timeTo: String = ""
     
