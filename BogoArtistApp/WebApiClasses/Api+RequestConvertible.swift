@@ -20,7 +20,7 @@ extension Api: URLRequestConvertible {
         }
 
         switch self {
-        case .signup, .client, .clientUpdate:
+        case .client, .clientUpdate:
             return req
 
         case .becomeStylist:

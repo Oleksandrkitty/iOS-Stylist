@@ -77,7 +77,7 @@ enum Api {
         case .auth:
             return "authenticate"
         case .signup:
-            return "clients/signup"
+            return "stylists/signup"
         case .forgot:
             return "password/forgot"
         case .serviceTypes:

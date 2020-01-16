@@ -184,6 +184,26 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
     }
     
     func callApiForRegister() {
+        let params = [
+            "stylists": [
+                //"years_of_experience": "string",
+                "description": obj.artistDescription,
+                "lat": "string",
+                "long": "string",
+                "user_attributes": [
+                    "first_name": obj.firstName,
+                    "last_name": obj.lastName,
+                    "phone": obj.phone.replaceString("-", withString: ""),
+                    "email": obj.email,
+                    "password": obj.password,
+                    "gcm_id": USERDEFAULT.value(forKey: pDeviceToken),
+                    "device_type": "IOS",
+                    "device_id": kDummyDeviceToken
+                ]
+            ]
+        ]
+        
+        /*
         let params  = [
             "type" : "0" as AnyObject,
             "first_name" : obj.firstName as AnyObject,
@@ -201,7 +221,8 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
             "device_type" : "IOS" as AnyObject,
             "gallery[]" : "" as AnyObject,
             ]
-        
+
+
         var mediaArray = [Dictionary<String, AnyObject>]()
         for image in imageArray {
             let timestamp = NSDate().timeIntervalSince1970
@@ -212,24 +233,20 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
                 keyMultiPartKeyAtServerSide : "gallery[]",
                 "mimeType" : "image/jpg"
                 ] as [String : AnyObject]
-            
+
             mediaArray.append(mediaInfoDict)
         }
-        
         let timestamp = NSDate().timeIntervalSince1970
         let filename = "image\(timestamp).jpg"
-        PServiceHelper.sharedInstance.createRequestToUploadDataWithString(additionalParams: params, dataContent: obj.profileImage?.toData(), strName: "photo", strFileName: filename, strType: "image/jpg", apiName: kAPINameRegistration, mediaArray: mediaArray) { (result, error) in
-            if let error = error {
-                AlertController.alert(title: "Information", message: error.localizedDescription)
-                
-            }  else {
-                DispatchQueue.main.async {
-                    let catgegoryVC = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGVerificationVC") as! BGVerificationVC
-                    self.present(catgegoryVC, animated: true, completion: nil)
-                }
+        */
+
+        Api.requestJSON(.signup(params: params), success: {
+            response in
+            DispatchQueue.main.async {
+                let controller = UIStoryboard.init(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "BGVerificationVC") as! BGVerificationVC
+                self.present(controller, animated: true, completion: nil)
             }
-            
-        }
+        })
     }
     
     // MARK:- Memory Management Method
