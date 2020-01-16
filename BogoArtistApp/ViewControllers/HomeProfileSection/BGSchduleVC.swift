@@ -153,7 +153,8 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
         else {
             
             let bookingDetailVC = storyBoardForName(name: "Main").instantiateViewController(withIdentifier: "BGBookedTimeVC") as! BGBookedTimeVC
-            
+            bookingDetailVC.selectedServiceIds = selectedServiceIds()
+
             if (dayView.date != nil) {
                 
                 let (what, aSch) = self.hasSchedule(dayYearString)
@@ -438,7 +439,7 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
     }
     
     func changeService(withSwitch sSwitch:UISwitch) {
-        
+        /*
         let hairService = self.hairSwitch.isOn
         let makeupService = self.makeupSwitch.isOn
         
@@ -492,7 +493,21 @@ class BGSchduleVC: UIViewController,CVCalendarViewDelegate,CVCalendarMenuViewDel
                 self.changeServiceType(bySwitch: sSwitch, willUpdate: false)
             }
         }
+        */
     }
-    
-    
+
+    func selectedServiceIds() -> [Int] {
+        var result: [Int] = []
+        if (hairSwitch.isOn) {
+            result.append(1)
+        }
+        if (makeupSwitch.isOn) {
+            result.append(2)
+        }
+        return result
+    }
+
+
+
+
 }

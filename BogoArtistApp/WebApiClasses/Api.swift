@@ -21,6 +21,7 @@ enum Api {
          // schedules
          schedules(params: [String: Any]),
          schedulesByStylist(params: [String: Any]),
+         addSchedules(params: [String: Any]),
 
          availabilities(params: [String: Any]),
          client(id: Int),
@@ -83,7 +84,7 @@ enum Api {
             return "services"
         case .nearestServices:
             return "services/nearest_services"
-        case  .schedules:
+        case  .schedules, .addSchedules:
             return "schedules"
         case  .schedulesByStylist:
             return "schedules/by_stylist"
@@ -147,6 +148,7 @@ enum Api {
              .updateMessage(id: _, params: let params),
              .schedules(params: let params),
              .schedulesByStylist(params: let params),
+             .addSchedules(params: let params),
              .notifications(params: let params),
              .availabilities(params: let params),
              .availableStylists(params: let params),
@@ -171,7 +173,6 @@ enum Api {
             return ["service_type": type]
         case .nearestServices(type: let type, lat: let lat, long: let long):
             return ["service_type_id": type, "lat": lat, "long": long]
-            return [:]
         case .favorites(clientId: let id),
              .pastBookings(clientId: let id):
             return ["client_id": id]

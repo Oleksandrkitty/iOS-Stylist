@@ -45,7 +45,9 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
     @IBOutlet weak var topMargin: NSLayoutConstraint!
     @IBOutlet weak var btSpace: NSLayoutConstraint!
     @IBOutlet weak var cHeight: NSLayoutConstraint!
-    
+
+    var selectedServiceIds: [Int] = []
+
     //MARK:- ============>View life Cycle Methods<=============>>
     override func viewDidLoad() {
         
@@ -265,42 +267,21 @@ class BGBookedScheduleVC: UIViewController,UICollectionViewDelegate,UICollection
     
     //MARK:- WebService Method
     func createSchedule() {
-        
-        let dict = NSMutableDictionary()
-        dict[pArtistID] = USERDEFAULT.value(forKey: pArtistID)
-        dict[pDate] = dateFullToSend
-        dict["slot_start_time"] = sStartTime
-        dict["slot_end_time"] = sEndTime
-        
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kPostArtistSchedule, hudType: .simple) { (result, error, status) in
-            if (error == nil) {
-                
-                if let response = result as? [String:Any] {
-                    
-                    print(response)
-                    
-                    let status = response["status"] as! Bool
-                    
-                    if status {
-                        
-                        NotificationCenter.default.post(name: Notification.Name("PostForSchedule"), object: nil)
-                        self.dismiss(animated: false, completion: nil)
-                        NotificationCenter.default.post(name: Notification.Name("PostForDismiss"), object: nil)
-                    }
-                    else {
-                        
-                        _ = AlertController.alert(title: "", message: response["message"] as! String)
-                    }
-                }
-                else {
-                    
-                    _ = AlertController.alert(title: "", message: "Something went wrong.")
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
-        }
+        let params: [String: Any] = [
+            "schedules": [
+                "serviceIds" : selectedServiceIds,
+                "date": dateFullToSend,
+                "start_time": sStartTime,
+                "end_time": sEndTime,
+            ]
+        ]
+
+        Api.requestJSON(.addSchedules(params: params), success: {
+            response in
+            NotificationCenter.default.post(name: Notification.Name("PostForSchedule"), object: nil)
+            self.dismiss(animated: false, completion: nil)
+            NotificationCenter.default.post(name: Notification.Name("PostForDismiss"), object: nil)
+        })
     }
 }
 

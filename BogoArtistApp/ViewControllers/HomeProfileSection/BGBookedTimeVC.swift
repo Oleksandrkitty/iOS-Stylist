@@ -24,12 +24,13 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     var schedule: BGScheduleInfo?
     var slots: [BGAvailableSlotInfo] = []
-   
+    var selectedServiceIds: [Int] = []
+
     @IBOutlet weak var topMargin: NSLayoutConstraint!
     @IBOutlet weak var tableHeight: NSLayoutConstraint!
     @IBOutlet weak var cHeight: NSLayoutConstraint!
     @IBOutlet var margins: [NSLayoutConstraint]!
-    
+
     // MARK:- ============ View life cycle Methods ==============//
     override func viewDidLoad() {
         
@@ -133,6 +134,7 @@ class BGBookedTimeVC: UIViewController,UITableViewDelegate,UITableViewDataSource
     @IBAction func addScheduleAction(_ sender: UIButton) {
         
         let bookingDetailVC = storyBoardForName(name: "Main").instantiateViewController(withIdentifier: "BGBookedScheduleVC") as! BGBookedScheduleVC
+        bookingDetailVC.selectedServiceIds = selectedServiceIds
         bookingDetailVC.dateFullToSend = fullDateString
         bookingDetailVC.slectedMonth = self.monthname[0..<3]
         bookingDetailVC.selectedDay = self.dayname
