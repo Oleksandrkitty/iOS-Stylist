@@ -98,9 +98,25 @@ class BGPaymentVC: UIViewController,UITableViewDelegate, UITableViewDataSource {
     }
     
     func setUpCircleData() {
-        periodLabel.text = "$" + "\(paymentDict.totalEarning)"
-        bookedLabel.text = "$" + "\(paymentDict.totalUpcomingPayment)"
-        if isNoDateIsThere{
+        periodLabel.text = ""
+        bookedLabel.text = ""
+
+        Api.requestMappable(.stylist(id: Int(currentUserId()) ?? 0), success: {
+            (stylist: BGStylistInfo) in
+            var payments = stylist.payments
+            if payments.isEmpty {
+                payments = "0.00"
+            }
+            self.periodLabel.text = "$" + "\(payments)"
+
+            var earnings = stylist.earnings
+            if earnings.isEmpty {
+                earnings = "0.00"
+            }
+            self.bookedLabel.text = "$" + "\(earnings)"
+        })
+
+        if isNoDateIsThere {
             payDays = 0 
         }
         payDayLabel.text = "\(payDays)" + " Days"

@@ -19,6 +19,9 @@ struct BGStylistInfo: Mappable, Equatable {
     var image: String = ""
     var ratingInfo: BGRatingInfo?
     var favorite: Bool = false
+    var payments: String = ""
+    var earnings: String = ""
+
     init() {}
     
     init?(map: Map) { }
@@ -34,6 +37,8 @@ struct BGStylistInfo: Mappable, Equatable {
         image <- map["image"]
         ratingInfo <- map["reviews"]
         favorite <- map["is_favorite"]
+        payments <- map["total_payments"]
+        earnings <- map["total_earning"]
     }
 
     static func == (lhs: BGStylistInfo, rhs: BGStylistInfo) -> Bool {
