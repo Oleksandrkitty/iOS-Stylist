@@ -27,16 +27,19 @@ class BGDashboardVC: UIViewController,CarbonTabSwipeNavigationDelegate{
     // MARK:- ============ View Lifecycle Methods ==============//
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.defaultSetup()
-        let items = ["Dashboard", "Schedule"]
-        upComingButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        paymentButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        carbonTabSwipeDashNavigation = CarbonTabSwipeNavigation(items: items, delegate: self)
-        carbonTabSwipeDashNavigation?.insert(intoRootViewController: self, andTargetView: self.containerView)
-        carbonTabSwipeDashNavigation?.view.frame = self.containerView.bounds
-        carbonTabSwipeDashNavigation?.setTabBarHeight(0)
-        carbonTabSwipeDashNavigation?.toolbar.isHidden = true
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        DispatchQueue.main.async { [weak self] in
+            guard let this = self else { return }
+            this.defaultSetup()
+            let items = ["Dashboard", "Schedule"]
+            this.upComingButton.titleLabel?.adjustsFontSizeToFitWidth = true
+            this.paymentButton.titleLabel?.adjustsFontSizeToFitWidth = true
+            carbonTabSwipeDashNavigation = CarbonTabSwipeNavigation(items: items, delegate: this)
+            carbonTabSwipeDashNavigation?.insert(intoRootViewController: this, andTargetView: this.containerView)
+            carbonTabSwipeDashNavigation?.view.frame = this.containerView.bounds
+            carbonTabSwipeDashNavigation?.setTabBarHeight(0)
+            carbonTabSwipeDashNavigation?.toolbar.isHidden = true
+            this.navigationController?.setNavigationBarHidden(true, animated: false)
+        }
     }
     
     override func didReceiveMemoryWarning() {

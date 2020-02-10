@@ -90,6 +90,10 @@
 		46E0C2401FF2943000CA424C /* UIWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E0C2101FF2942F00CA424C /* UIWindowExtension.swift */; };
 		46E0C2441FF2943000CA424C /* WalkThroughVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E0C2171FF2942F00CA424C /* WalkThroughVC.swift */; };
 		5AC15878FF613017BE44029D /* Pods_BogoArtistAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46A39F45C9868B9CFE87F5AA /* Pods_BogoArtistAppTests.framework */; };
+		641CEA7523386D3F00E7FE4A /* BGUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641CEA7423386D3F00E7FE4A /* BGUserInfo.swift */; };
+		641CEA79233C746100E7FE4A /* Api+RequestConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641CEA76233C746000E7FE4A /* Api+RequestConvertible.swift */; };
+		641CEA7A233C746100E7FE4A /* Api+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641CEA77233C746100E7FE4A /* Api+Networking.swift */; };
+		641CEA7B233C746100E7FE4A /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641CEA78233C746100E7FE4A /* Api.swift */; };
 		662975BB5E6F712DF6F5F801 /* Pods_BogoArtistApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCCF3FA8B159C5F495A87FA0 /* Pods_BogoArtistApp.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		77099EA41FF5696200CF704F /* BGAppointmentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77099EA31FF5696200CF704F /* BGAppointmentVC.swift */; };
 		7724919B1FFE289200C76EDC /* BGUpcomingInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7724919A1FFE289200C76EDC /* BGUpcomingInfoModel.swift */; };
@@ -252,6 +256,10 @@
 		46E0C2101FF2942F00CA424C /* UIWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtension.swift; sourceTree = "<group>"; };
 		46E0C2171FF2942F00CA424C /* WalkThroughVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalkThroughVC.swift; sourceTree = "<group>"; };
 		46E0C2461FF2949C00CA424C /* BogoArtistApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BogoArtistApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		641CEA7423386D3F00E7FE4A /* BGUserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BGUserInfo.swift; sourceTree = "<group>"; };
+		641CEA76233C746000E7FE4A /* Api+RequestConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Api+RequestConvertible.swift"; sourceTree = "<group>"; };
+		641CEA77233C746100E7FE4A /* Api+Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Api+Networking.swift"; sourceTree = "<group>"; };
+		641CEA78233C746100E7FE4A /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		77099EA31FF5696200CF704F /* BGAppointmentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGAppointmentVC.swift; sourceTree = "<group>"; };
 		77221F481FFB796200C0EB8B /* BogoArtistAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BogoArtistAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77221F4A1FFB796200C0EB8B /* BogoArtistAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BogoArtistAppTests.swift; sourceTree = "<group>"; };
@@ -498,6 +506,9 @@
 		46E0C1EB1FF2942F00CA424C /* WebApiClasses */ = {
 			isa = PBXGroup;
 			children = (
+				641CEA78233C746100E7FE4A /* Api.swift */,
+				641CEA77233C746100E7FE4A /* Api+Networking.swift */,
+				641CEA76233C746000E7FE4A /* Api+RequestConvertible.swift */,
 				46E0C1F51FF2942F00CA424C /* ServiceHelper.swift */,
 				C27AE6CE2011F03000BDDD03 /* PServiceHelper.swift */,
 				46E0C1EC1FF2942F00CA424C /* ApiConstants.swift */,
@@ -544,6 +555,7 @@
 		46E0C1FB1FF2942F00CA424C /* ModelClasses */ = {
 			isa = PBXGroup;
 			children = (
+				641CEA7423386D3F00E7FE4A /* BGUserInfo.swift */,
 				0DD623AF200C8FE700C52752 /* LocationInfo.swift */,
 				0D16A60F1FF29D2C002A89A6 /* BGUserInfoModal.swift */,
 				46E0C1FC1FF2942F00CA424C /* CQUser.swift */,
@@ -747,7 +759,7 @@
 				CLASSPREFIX = BG;
 				LastSwiftUpdateCheck = 0900;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = Mobiloitte;
+				ORGANIZATIONNAME = "Blowout Go Out, LLC";
 				TargetAttributes = {
 					46E0C1BD1FF2938B00CA424C = {
 						CreatedOnToolsVersion = 9.2;
@@ -942,6 +954,7 @@
 				46E0C2201FF2943000CA424C /* AppConstants.swift in Sources */,
 				0DD623B0200C8FE700C52752 /* LocationInfo.swift in Sources */,
 				0D3330FD1FF53DF500BF8014 /* BGBookedTimeCell.swift in Sources */,
+				641CEA7A233C746100E7FE4A /* Api+Networking.swift in Sources */,
 				46E0C2241FF2943000CA424C /* Log.swift in Sources */,
 				46E0C23E1FF2943000CA424C /* UIViewControllerExtension.swift in Sources */,
 				0D3331001FF53E3200BF8014 /* BGBookedScheduleVC.swift in Sources */,
@@ -980,6 +993,8 @@
 				0D3330F61FF5245100BF8014 /* BGWalkThroughCell2.swift in Sources */,
 				46E0C2231FF2943000CA424C /* EKMediaPicker.swift in Sources */,
 				46E0C2261FF2943000CA424C /* RPicker.swift in Sources */,
+				641CEA79233C746100E7FE4A /* Api+RequestConvertible.swift in Sources */,
+				641CEA7B233C746100E7FE4A /* Api.swift in Sources */,
 				46E0C1C21FF2938B00CA424C /* AppDelegate.swift in Sources */,
 				46E0C2441FF2943000CA424C /* WalkThroughVC.swift in Sources */,
 				0D398221200482AD00E169CD /* SDWebImageManager.m in Sources */,
@@ -1010,6 +1025,7 @@
 				46E0C23C1FF2943000CA424C /* TextFieldExtension.swift in Sources */,
 				46E0C2371FF2943000CA424C /* GeneralExtension.swift in Sources */,
 				7724919F1FFE28DA00C76EDC /* BGScheduleModel.swift in Sources */,
+				641CEA7523386D3F00E7FE4A /* BGUserInfo.swift in Sources */,
 				0D16A60E1FF29CE5002A89A6 /* BGProfileVC.swift in Sources */,
 				0D398220200482AD00E169CD /* SDWebImageDownloaderOperation.m in Sources */,
 				C22F2A8320230BD500768E18 /* BGReviewModel.swift in Sources */,
@@ -1190,12 +1206,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Daniel Ferreira (JQRTT5DE79)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = 5F7SS3JH66;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BogoArtistApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bogo.artist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bogo.stylist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1215,12 +1232,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Daniel Ferreira (JQRTT5DE79)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = 5F7SS3JH66;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BogoArtistApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bogo.artist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bogo.stylist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

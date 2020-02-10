@@ -7,6 +7,7 @@
 import Alamofire
 import UIKit
 import AVFoundation
+import SwiftyJSON
 
 class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
@@ -20,7 +21,7 @@ class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource,
     @IBOutlet weak var attachButton             : UIButton!
     var placeHolderArray                        : Array<String> = []
     var imageArraySendApi                       : Array<AnyObject> = []
-    var obj                                     = BGUserInfoModal()
+    var obj                                     = BGUserInfo()
     var errorRowNumber                          = Int()
     var picker                                  : UIImagePickerController?=UIImagePickerController()
     var imageArray                              = [UIImage]()
@@ -63,32 +64,32 @@ class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource,
         
         switch indexPath.row {
         case 0:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.text = obj.firstName
             cell.inputTextField.autocapitalizationType = .words
             break
         case 1:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.text = obj.lastName
             cell.inputTextField.autocapitalizationType = .words
             break
         case 2:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.keyboardType = .emailAddress
             cell.inputTextField.text = obj.email
             break
         case 3:
             cell.inputTextField.inputAccessoryView = getToolBarWithDoneButton()
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
-            cell.inputTextField.text = obj.phone
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
+            cell.inputTextField.text = obj.phoneNumber
             break
         case 4:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.text = obj.password
             break
         case 5:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.returnKeyType = .done
             cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.text = obj.confirmPassword
@@ -131,7 +132,7 @@ class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource,
         if (registerTableView.indexPathsForVisibleRows?.contains(IndexPath.init(row: textField.tag-100, section: 0)))! {
             let cell = registerTableView.cellForRow(at: IndexPath.init(row: textField.tag-100, section: 0)) as! BGSingleTextFieldCell
             cell.validationLabel.text = ""
-            obj.validationLabel = ""
+            obj.errorMessage = ""
         }
     }
     
@@ -200,7 +201,7 @@ class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource,
             obj.email = (textField.text?.trimWhiteSpace)!
             break
         case 103:
-            obj.phone = (textField.text?.trimWhiteSpace)!
+            obj.phoneNumber = (textField.text?.trimWhiteSpace)!
             break
         case 104:
             obj.password = (textField.text?.trimWhiteSpace)!
@@ -228,49 +229,49 @@ class BGRegisterVC: UIViewController, UITableViewDelegate,UITableViewDataSource,
         var isValid: Bool = false
         if obj.firstName.trimWhiteSpace.length == empty {
             errorRowNumber = 100
-            obj.validationLabel = blankFirstName
+            obj.errorMessage = blankFirstName
         } else if obj.firstName.trimWhiteSpace.length < nameMinLength {
             errorRowNumber = 100
-            obj.validationLabel = validFirstName
+            obj.errorMessage = validFirstName
         } else if !obj.firstName.isValidName{
             errorRowNumber = 100
-            obj.validationLabel = validFirstName
+            obj.errorMessage = validFirstName
         } else if obj.lastName.trimWhiteSpace.length == empty {
             errorRowNumber = 101
-            obj.validationLabel = blankLastName
+            obj.errorMessage = blankLastName
         } else if obj.lastName.trimWhiteSpace.length < nameMinLength {
             errorRowNumber = 101
-            obj.validationLabel = validLastName
+            obj.errorMessage = validLastName
         } else if !obj.lastName.containsAlphabetsOnly(){
             errorRowNumber = 101
-            obj.validationLabel = validLastName
+            obj.errorMessage = validLastName
         } else if obj.email.trimWhiteSpace.length == empty {
             errorRowNumber = 102
-            obj.validationLabel = blankEmail
+            obj.errorMessage = blankEmail
         } else if !obj.email.isEmail {
             errorRowNumber = 102
-            obj.validationLabel = invalidEmail
-        } else if (obj.phone.replaceString("-", withString: "")).length == empty{
+            obj.errorMessage = invalidEmail
+        } else if (obj.phoneNumber.replaceString("-", withString: "")).length == empty{
             errorRowNumber = 103
-            obj.validationLabel = blankMobileNumber
-        }else if obj.phone.length <= phoneNumberMinLength{
+            obj.errorMessage = blankMobileNumber
+        }else if obj.phoneNumber.length <= phoneNumberMinLength{
             errorRowNumber = 103
-            obj.validationLabel = blankMobileNumber
+            obj.errorMessage = blankMobileNumber
         }else if obj.password.trimWhiteSpace.length == empty {
             errorRowNumber = 104
-            obj.validationLabel = blankPassword
+            obj.errorMessage = blankPassword
         } else if obj.password.trimWhiteSpace.length < passwordMinLength {
             errorRowNumber = 104
-            obj.validationLabel = minPassword
+            obj.errorMessage = minPassword
         } else if obj.confirmPassword.trimWhiteSpace.length == empty {
             errorRowNumber = 105
-            obj.validationLabel = blankConfirmPassword
+            obj.errorMessage = blankConfirmPassword
         } else if obj.confirmPassword.trimWhiteSpace.length < passwordMinLength {
             errorRowNumber = 105
-            obj.validationLabel = minPassword
+            obj.errorMessage = minPassword
         } else if obj.confirmPassword != obj.password {
             errorRowNumber = 105
-            obj.validationLabel = mismatchPassowrdAndConfirmPassword
+            obj.errorMessage = mismatchPassowrdAndConfirmPassword
         } else {
             isValid = true
         }
@@ -292,9 +293,9 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         if image != nil{
             if selectedImageViewTag == 500{
                 profileImageView.image = image
-                obj.profileImage = image
+                obj.profilePic = image
             } else{
-                obj.collectionProfileImage = image
+                obj.profilePic = image
                 if isEdit == false{
                     isEdit = true
                     tableViewHeightConstraint.constant = 98
@@ -345,7 +346,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         )
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Allow ", style: .cancel, handler: { (alert) -> Void in
-            UIApplication.shared.openURL(NSURL(string: UIApplication.openSettingsURLString)! as URL)
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
         }))
         present(alert, animated: true, completion: nil)
     }
@@ -396,13 +397,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     @IBAction func registerButtonAction(_ sender: UIButton) {
         self.view.endEditing(true)
         if validateFields(){
-            //callApiForRegister()
-            DispatchQueue.main.async {
-                let ObjVC = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGLocationViewController") as! BGLocationViewController
-                ObjVC.obj = self.obj
-                ObjVC.imageArray = self.imageArray
-                self.navigationController?.pushViewController(ObjVC, animated: true)
-            }
+            callApiForRegister()
         }
     }
     
@@ -417,15 +412,37 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     
     //MARK:- WebService Method
     func callApiForRegister() {
-        let params  = [
+        
+        let params : [String: Any?] = [
+            "stylists[years_of_experience]" : "",
+            "stylists[description]" : "",
+            "stylists[user_attributes[first_name]]" : obj.firstName,
+            "stylists[user_attributes[last_name]]" : obj.lastName,
+            "stylists[user_attributes[email]]" : obj.email,
+            "stylists[user_attributes[password]]" : obj.password,
+            "stylists[user_attributes[gcm_id]]" : UserDefaults.standard.string(forKey: pDeviceToken),
+            "stylists[user_attributes[phone]]" : obj.phoneNumber,
+            "stylists[user_attributes[device_type]]" : kDeviceType,
+            "stylists[user_attributes[device_id]]" : UserDefaults.standard.string(forKey: pDeviceToken),
+            "stylists[image]": self.profileImageView.image
+            ]
+        print(params)
+        Api.upload(.signup(params: params.compactMapValues({ $0 })), success: { [weak self] _ in
+            self?.callWebApiToLoginUser()
+        })
+
+        
+        
+        
+        /*let params  = [
             "type" : "0" as AnyObject,
             "first_name" : obj.firstName as AnyObject,
             "last_name" : obj.lastName as AnyObject,
             "email" : obj.email as AnyObject,
             "password" : obj.password as AnyObject,
             "device_id" : kDummyDeviceToken as AnyObject,
-            "photo" : (obj.profileImage == nil) ? "" as AnyObject : obj.profileImage!.toData() as AnyObject,
-            "phone" : obj.phone.replaceString("-", withString: "") as AnyObject,
+            //"photo" : (obj.profileImage == nil) ? "" as AnyObject : obj.profileImage!.toData() as AnyObject,
+            //"phone" : obj.phone.replaceString("-", withString: "") as AnyObject,
             "welcome_kit" : "1" as AnyObject,
             "lat" : USERDEFAULT.value(forKey: "userLat") as AnyObject,
             "long" : USERDEFAULT.value(forKey: "userLong") as AnyObject,
@@ -462,9 +479,26 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
                     self.navigationController?.pushViewController(ObjVC, animated: true)
                 }
             }
-        }
+        }*/
     }
     
+    func callWebApiToLoginUser() {
+        Api.requestJSON(.auth(email: obj.email, password: obj.password),
+                        success: { [weak self] val in
+            let token = JSON(val)["auth_token"].string
+            
+            if token != nil && (try? BGUserInfo.fromJWTToken(token: token)) != nil {
+                let defaults = UserDefaults.standard
+                defaults.set(token, forKey: kAuthToken)
+                defaults.synchronize()
+                DispatchQueue.main.async {
+                    let ObjVC = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGLocationViewController") as! BGLocationViewController
+                    self?.navigationController?.pushViewController(ObjVC, animated: true)
+                }
+            }
+        })
+    }
+
     //MARK:- Memory Management Methods
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

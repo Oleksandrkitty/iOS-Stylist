@@ -18,8 +18,8 @@ enum Api {
     nearestServices(type: Int, lat: Double, long: Double),
     schedules(params: [String: Any]),
     availabilities(scheduleId: Int),
-    client(id: Int),
-    clientUpdate(id: Int, params: [String: Any]),
+    stylist(id: Int),
+    stylistUpdate(id: Int, params: [String: Any]),
     notifications(params: [String: Any]),
     favorites(clientId: String),
     help(message: String),
@@ -34,7 +34,7 @@ enum Api {
         case .auth:
             return "authenticate"
         case .signup:
-            return "clients/signup"
+            return "stylists/signup"
         case .forgot:
             return "password/forgot"
         case .services:
@@ -45,8 +45,8 @@ enum Api {
             return "schedules"
         case .availabilities:
             return "availabilities"
-        case .client(id: let id), .clientUpdate(id: let id, params: _):
-            return "clients/\(id)"
+        case .stylist(id: let id), .stylistUpdate(id: let id, params: _):
+            return "stylists/\(id)"
         case .notifications:
             return "notifications"
         case .favorites:
@@ -69,13 +69,13 @@ enum Api {
     var params: [String: Any] {
         switch self {
         case .signup(params: let params),
-             .clientUpdate(id: _, params: let params),
+             .stylistUpdate(id: _, params: let params),
              .schedules(params: let params),
              .notifications(params: let params),
              .becomeStylist(params: let params):
             return params
         case .auth(email: let email, password: let password):
-            return ["email": email, "password": password, "role": "client"]
+            return ["email": email, "password": password, "role": "stylist"]
         case .forgot(email: let email):
             return ["email": email]
         case .services(type: let type):
@@ -84,7 +84,7 @@ enum Api {
             return ["service_type_id": type, "lat": lat, "long": long]
         case .availabilities(scheduleId: let id):
             return ["schedule_id": id]
-        case .client, .deleteCard:
+        case .stylist, .deleteCard:
             return [:]
         case .favorites(clientId: let id),
              .pastBookings(clientId: let id),
@@ -99,11 +99,11 @@ enum Api {
     var method: HTTPMethod {
         switch self {
         case .services, .schedules,
-             .availabilities, .client, .notifications,
+             .availabilities, .stylist, .notifications,
              .favorites, .upcomingBookings, .pastBookings,
             .cards, .nearestServices:
             return .get
-        case .clientUpdate:
+        case .stylistUpdate:
             return .put
         case .deleteCard:
             return .delete

@@ -16,7 +16,7 @@ extension Api: URLRequestConvertible {
     
     private func encodeParams(req: URLRequest) throws -> URLRequest {
         switch self {
-        case .signup, .client, .clientUpdate:
+        case .signup, .stylist, .stylistUpdate:
             return req
         case .services, .schedules, .availabilities, .notifications,
              .favorites, .upcomingBookings, .pastBookings, .nearestServices:
@@ -33,7 +33,7 @@ extension Api: URLRequestConvertible {
         var isJsonReq = true
         req.setValue("application/json", forHTTPHeaderField: "Accept")
         switch self {
-        case .clientUpdate, .becomeStylist:
+        case .stylistUpdate, .becomeStylist:
             isJsonReq = false
         case .signup:
             hasAuth = false

@@ -27,7 +27,7 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
     var delegate                    : LocationControllerDelegate?
     @IBOutlet weak var customMarker : UIView!
     var selectedPosition            = LocationInfo()
-    var obj                         = BGUserInfoModal()
+    var obj                         = BGUserInfo()
     var imageArray                  = [UIImage]()
     
     // MARK:- View LifeCycle Method
@@ -39,9 +39,9 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
             }else{
                 isLocation = false
             }
-            let textfield = searchBar.value(forKey: "_searchField") as! UITextField
-            textfield.clearButtonMode = .never
-            textfield.isEnabled = false
+            //let textfield = searchBar.value(forKey: "_searchField") as! UITextField
+            //textfield.clearButtonMode = .never
+            //textfield.isEnabled = false
             NotificationCenter.default.addObserver(self, selector: #selector(self.showSpinningWheel), name: NSNotification.Name(rawValue: "PostToPush"), object: nil)
             searchBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapOnSearchBar)))
             
@@ -187,7 +187,7 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
     }
     
     func callApiForRegister() {
-        let params  = [
+        let params: [String: Any]  = [/*
             "type" : "0" as AnyObject,
             "first_name" : obj.firstName as AnyObject,
             "last_name" : obj.lastName as AnyObject,
@@ -202,8 +202,8 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
             "long" : (self.selectedPosition.long == "") ? USERDEFAULT.value(forKey: "userNewLong") as AnyObject : self.selectedPosition.long as AnyObject,
             "gcm_id" : USERDEFAULT.value(forKey: pDeviceToken) as AnyObject,
             "device_type" : "IOS" as AnyObject,
-            "gallery[]" : "" as AnyObject,
-            ]
+            "gallery[]" : "" as AnyObject,*/
+            :]
         
         var mediaArray = [Dictionary<String, AnyObject>]()
         for image in imageArray {
@@ -221,7 +221,7 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
         
         let timestamp = NSDate().timeIntervalSince1970
         let filename = "image\(timestamp).jpg"
-        PServiceHelper.sharedInstance.createRequestToUploadDataWithString(additionalParams: params, dataContent: obj.profileImage?.toData(), strName: "photo", strFileName: filename, strType: "image/jpg", apiName: kAPINameRegistration, mediaArray: mediaArray) { (result, error) in
+        /*PServiceHelper.sharedInstance.createRequestToUploadDataWithString(additionalParams: params, dataContent: obj.profileImage?.toData(), strName: "photo", strFileName: filename, strType: "image/jpg", apiName: kAPINameRegistration, mediaArray: mediaArray) { (result, error) in
             if let error = error {
                 AlertController.alert(title: "Information", message: error.localizedDescription)
                 
@@ -232,7 +232,7 @@ class BGLocationViewController: UIViewController, CLLocationManagerDelegate, GMS
                 }
             }
             
-        }
+        }*/
     }
     
     // MARK:- Memory Management Method

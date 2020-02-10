@@ -33,8 +33,8 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate,UICollectionViewDa
     var showCrossImage                          = false
     var isFirstTime                             = false
     var isNewImage                              = false
-    var obj                                     = BGUserInfoModal()
-    var profileData                             = BGUserInfoModal()
+    var obj                                     = BGUserInfo()
+    var profileData                             = BGUserInfo()
     var galleryID                               = [String]()
     var selectedImageViewTag                    = Int()
     var subCategoryLisrArray                    = [BGGalleryInfo]()
@@ -83,7 +83,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate,UICollectionViewDa
             //self.descriptionTextView.delegate = self
             self.addSlantLayerToHeaderView()
             self.dummyPlaceholderImage = nil
-            if !self.isFirstTime{
+            /*if !self.isFirstTime{
                 self.newprofileImageView.sd_setImage(with: URL(string: self.profileData.profileImageUrl ) , placeholderImage: UIImage.init(named: "bg_image") , options: .refreshCached)
             }
             self.profileData.profileName =   self.profileData.firstName + " " + self.profileData.lastName
@@ -92,7 +92,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate,UICollectionViewDa
                 self.descriptionTextView.placeholder = "Describe yourself"
             } else{
                 self.descriptionTextView.text = self.profileData.artistDescription
-            }
+            }*/
             self.saveButton.layer.cornerRadius = 21.0
             self.scrollView.contentSize = CGSize(width: self.scrollView.frame.size.width,height: self.descriptionTextView.frame.size.height + 260)        }
     }
@@ -151,7 +151,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate,UICollectionViewDa
     
     //MARK:- UITextField Delegates
     func textFieldDidEndEditing(_ textField: UITextField) {
-        profileData.profileName = textField.text!
+        //profileData.profileName = textField.text!
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -183,7 +183,7 @@ class BGProfileVC: UIViewController, UICollectionViewDelegate,UICollectionViewDa
         if textView.text.length == 0 {
             self.descriptionTextView.placeholder = "Describe yourself"
         }
-        profileData.artistDescription = textView.text!
+        //profileData.artistDescription = textView.text!
     }
     
     // MARK:- ==================UIImage Picker Delegate======================
@@ -199,7 +199,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         if let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage {
             if !isFromGallery{   //check for gallery images
                 newprofileImageView.image = image
-                profileData.profileImage = image
+                //profileData.profileImage = image
             }else {
                 if isNewImage{  //check for new image
                     let objGalleryInfo = BGGalleryInfo()
@@ -289,8 +289,8 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         let lattitude = notification.userInfo!["lat"]
         let longTitude = notification.userInfo!["long"]
         backFromLocation = (notification.userInfo!["BackToProfile"] != nil)
-        profileData.latitude = String(format:"%f", lattitude as! CVarArg)
-        profileData.longitude = String(format:"%f", longTitude as! CVarArg)
+        //profileData.latitude = String(format:"%f", lattitude as! CVarArg)
+        //profileData.longitude = String(format:"%f", longTitude as! CVarArg)
         if backFromLocation{
             saveButton.backgroundColor = #colorLiteral(red: 0.4968798757, green: 0.812468946, blue: 0.202557534, alpha: 1)
             saveButton.setTitle("Save Changes", for: .normal)
@@ -366,7 +366,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     
     @IBAction func cancelButtonAction(_ sender: UIButton) {
         if sender.currentTitle == "Cancel" {
-            self.newprofileImageView.sd_setImage(with: URL(string: self.profileData.profileImageUrl ) , placeholderImage: UIImage.init(named: "bg_image") , options: .refreshCached)
+            self.newprofileImageView.sd_setImage(with: URL(string: ""/*self.profileData.profileImageUrl*/ ) , placeholderImage: UIImage.init(named: "bg_image") , options: .refreshCached)
             saveButton.setTitle("Logout", for: .normal)
         }else {
             let ObjVC = UIStoryboard.init(name: "Auth", bundle:nil).instantiateViewController(withIdentifier: "BGLocationViewController") as! BGLocationViewController
@@ -388,7 +388,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     
     func validateFields() -> Bool {
         var isValid: Bool = false
-        if profileData.profileName.trimWhiteSpace.length == empty {
+        /*if profileData.profileName.trimWhiteSpace.length == empty {
             profileData.validationLabel = blankFirstName
         } else if profileData.profileName.trimWhiteSpace.length < nameMinLength {
             profileData.validationLabel = validFirstName
@@ -398,7 +398,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             profileData.validationLabel = validLastName
         } else {
             isValid = true
-        }
+        }*/
         return isValid
     }
     
@@ -407,7 +407,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         let dict = NSMutableDictionary()
         dict["ar_id"] = USERDEFAULT.value(forKey: pArtistID)
         dict["user_id"] = USERDEFAULT.value(forKey: pArtistID)
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINameGetProfile, hudType: .simple) { (response, error, status) in
+        /*ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINameGetProfile, hudType: .simple) { (response, error, status) in
             
             if (error == nil) {
                 
@@ -463,11 +463,11 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
                 _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
                 
             }
-        }
+        }*/
     }
     
     func callApiForUpdateProfile() {
-        let newUserName         = profileData.profileName
+        let newUserName         = ""//profileData.profileName
         let newUserNameArr      = newUserName.components(separatedBy: " ")
         profileData.firstName   = newUserNameArr[0]
         profileData.lastName    = newUserNameArr[1]
@@ -483,12 +483,12 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             pFirstName : profileData.firstName as AnyObject,
             pLastName : profileData.lastName as AnyObject,
             pemail : profileData.email as AnyObject,
-            pPhone : profileData.phone as AnyObject,
-            pWelcomeKit : profileData.welcomeKit as AnyObject,
-            pLatitude : profileData.latitude as AnyObject,
-            pLongitude : profileData.longitude as AnyObject,
+            //pPhone : profileData.phone as AnyObject,
+            //pWelcomeKit : profileData.welcomeKit as AnyObject,
+            //pLatitude : profileData.latitude as AnyObject,
+            //pLongitude : profileData.longitude as AnyObject,
             pRadius : "20" as AnyObject,
-            pDescription : profileData.artistDescription as AnyObject,
+            //pDescription : profileData.artistDescription as AnyObject,
             "photo" : "" as AnyObject,
             "gallery[]" : "" as AnyObject,
             "galleryID[]" : stringRepesentation as AnyObject
@@ -512,7 +512,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         
         let timestamp = NSDate().timeIntervalSince1970
         let filename = "image\(timestamp).jpg"
-        PServiceHelper.sharedInstance.createRequestToUploadDataWithString(additionalParams: params, dataContent: profileData.profileImage?.toData(), strName: "photo", strFileName: filename, strType: "image/jpg", apiName: kAPINameUpdateProfile, mediaArray: mediaArray) { (result, error) in
+        /*PServiceHelper.sharedInstance.createRequestToUploadDataWithString(additionalParams: params, dataContent: profileData.profileImage?.toData(), strName: "photo", strFileName: filename, strType: "image/jpg", apiName: kAPINameUpdateProfile, mediaArray: mediaArray) { (result, error) in
             if let error = error {
                 AlertController.alert(title: "Information", message: error.localizedDescription)
                 
@@ -528,7 +528,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
                     self.imageCollectionView.reloadData()
                 }
             }
-        }
+        }*/
     }
     
     //MARK:- Memory Management Methods

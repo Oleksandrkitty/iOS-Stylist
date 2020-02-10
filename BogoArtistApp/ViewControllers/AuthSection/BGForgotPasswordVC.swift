@@ -10,7 +10,7 @@ class BGForgotPasswordVC: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var forgotTextField  : UITextField!
     @IBOutlet weak var validationLabel  : UILabel!
-    var obj                             = BGUserInfoModal()
+    var obj                             = BGUserInfo()
     
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
@@ -101,29 +101,13 @@ class BGForgotPasswordVC: UIViewController, UITextFieldDelegate {
     
     //MARK:- WebService helper Method
     func callApiForForgotPassword() {
-        let dict = NSMutableDictionary()
-        dict[pemail] = obj.email
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINAMEForgotPassword, hudType: .simple) { (result, error, status) in
-            
-            if (error == nil) {
-                
-                if let response = result as? Dictionary<String, AnyObject> {
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue{
-                        let alert =   response.validatedValue("message", expected: "" as AnyObject)
-                        AlertController.alert(title: "", message: alert as! String , buttons: ["Ok"], tapBlock: { (action, index) in
-                            self.navigationController?.popViewController(animated: true)
-                        })
-                    }
-                    else {
-                        let errorDic = response.validatedValue("message", expected: "" as AnyObject) as! String
-                        _ = AlertController.alert(title: "", message: errorDic)
-                    }
-                }
-            }
-            else {
-                _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-            }
-        }
+        
+        Api.requestJSON(.forgot(email: obj.email), success: { [weak self] _ in
+            AlertController.alert(title: "", message: "Please check your e-mail for instructions", buttons: ["OK"], tapBlock: { (alert, index) in
+                self?.navigationController?.popViewController(animated: true)
+            })
+        })
+
     }
     
     //MARK:- Memory Management Methods

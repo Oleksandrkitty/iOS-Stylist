@@ -21,7 +21,7 @@ let GOOGLE_ = "Swift Constants"
     var isReachable             = false
     var location                = CLLocation()
     var locationManagerNew      : CLLocationManager!
-    var singletonObj            = BGUserInfoModal()
+    var singletonObj            = BGUserInfo()
     var statusBarView           : UIView?
     var isChatOnTop             = false
     var isAppointmentOnTop      = false

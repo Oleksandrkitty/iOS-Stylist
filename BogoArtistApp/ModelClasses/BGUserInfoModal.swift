@@ -6,7 +6,7 @@
 
 import UIKit
 
-class BGUserInfoModal: NSObject {
+/*class BGUserInfoModal: NSObject {
 
     var firstName                   = ""
     var lastName                    = ""
@@ -80,4 +80,4 @@ class BGUserInfoModal: NSObject {
         objSubCategory.galleryIdArray.append(objSubCategory.galId)
         return objSubCategory
     }
-}
+}*/

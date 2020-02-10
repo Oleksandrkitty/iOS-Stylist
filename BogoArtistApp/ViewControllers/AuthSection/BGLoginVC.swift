@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UITextFieldDelegate {
     
@@ -13,7 +14,7 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
     @IBOutlet weak var loginTableView   : UITableView!
     var placeHolderArray                : Array<String> = []
     var errorRowNumber                  = Int()
-    var obj                             = BGUserInfoModal()
+    var obj                             = BGUserInfo()
     
     // MARK: - UIViewController LifeCycle
     override func awakeFromNib() {
@@ -45,12 +46,12 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
                                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
         switch indexPath.row {
         case 0:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.returnKeyType = .next
             cell.inputTextField.keyboardType = .emailAddress
             break
         case 1:
-            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.validationLabel : ""
+            cell.validationLabel.text = (errorRowNumber == cell.inputTextField.tag) ? obj.errorMessage : ""
             cell.inputTextField.returnKeyType = .done
             cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.keyboardType = .default
@@ -70,7 +71,7 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
         if (loginTableView.indexPathsForVisibleRows?.contains(IndexPath.init(row: textField.tag-100, section: 0)))! {
             let cell = loginTableView.cellForRow(at: IndexPath.init(row: textField.tag-100, section: 0)) as! BGSingleTextFieldCell
             cell.validationLabel.text = ""
-            obj.validationLabel = ""
+            obj.errorMessage = ""
         }
     }
     
@@ -123,20 +124,20 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
         var isValid: Bool = false
         if obj.email.trimWhiteSpace.length == empty {
             errorRowNumber = 100
-            obj.validationLabel = blankEmail
+            obj.errorMessage = blankEmail
             isValid = false
         } else if !obj.email.isEmail {
             errorRowNumber = 100
-            obj.validationLabel = invalidEmail
+            obj.errorMessage = invalidEmail
             isValid = false
         } else if obj.password.trimWhiteSpace.length == empty {
             errorRowNumber = 101
-            obj.validationLabel = blankPassword
+            obj.errorMessage = blankPassword
             isValid = false
         } 
         else if obj.password.trimWhiteSpace.length < passwordMinLength {
             errorRowNumber = 101
-            obj.validationLabel = minPassword
+            obj.errorMessage = minPassword
             isValid = false
         }else {
             isValid = true
@@ -169,44 +170,20 @@ class BGLoginVC: UIViewController, UITableViewDelegate,UITableViewDataSource, UI
     
     //MARK:- WebService Method
     func callApiForLogin() {
-        let dict = NSMutableDictionary()
-        dict[pType]             = "0"
-        dict[pemail]            = obj.email
-        dict[pPassword]         = obj.password
-        dict[pGCM_ID]           = USERDEFAULT.value(forKey: pDeviceToken) as AnyObject
-        dict[pDeviceToken]      = USERDEFAULT.value(forKey: pDeviceToken) as AnyObject
-        dict[pDeviceType]       = "IOS"
         
-        ServiceHelper.request(params: dict as! Dictionary<String, AnyObject>, method: .post, apiName: kAPINameLogin, hudType: .simple) { (result, error, status) in
-            
-            if (error == nil) {
-                
-                if let response = result as? Dictionary<String, AnyObject> {
-                    
-                    if(response.validatedValue(pStatus, expected:"" as AnyObject)).boolValue {
-                        USERDEFAULT.set(response.validatedValue("arProfilePic", expected: "" as AnyObject) as! String, forKey: "userProfilePic")
-                        let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGBaseVC") as! BGBaseVC
-                        self.navigationController?.pushViewController(ObjVC, animated: true)
-                        let data = response.validatedValue("data", expected: NSDictionary()) as! Dictionary<String, AnyObject>
-                        USERDEFAULT.set(data.validatedValue("id" , expected: "" as AnyObject) as! String, forKey: pArtistID)
-                        let lattitudeArtist = data.validatedValue("arLat" , expected: "" as AnyObject).doubleValue
-                        let longitudeArtist = data.validatedValue("arLong" , expected: "" as AnyObject).doubleValue
-                        USERDEFAULT.set(lattitudeArtist, forKey: "LatForDistance")
-                        USERDEFAULT.set(longitudeArtist, forKey: "LongForDistance")
-                        USERDEFAULT.set(data["arServiceType"], forKey: "_service")
-                        
-                        USERDEFAULT.synchronize()
-                    } else {
-                        let errorDic = response.validatedValue("message", expected: "" as AnyObject) as! String
-                        _ = AlertController.alert(title: "", message: errorDic)
-                    }
-                }
-                else {
-                    _ = AlertController.alert(title: "", message: "\(error!.localizedDescription)")
-                    
-                }
-            }
-        }
+        Api.requestJSON(.auth(email: obj.email, password: obj.password),
+                        success: { [weak self] val in
+                            let token = JSON(val)["auth_token"].string
+                            
+                            if token != nil && (try? BGUserInfo.fromJWTToken(token: token)) != nil {
+                                let defaults = UserDefaults.standard
+                                defaults.set(token, forKey: kAuthToken)
+                                defaults.synchronize()
+                                let ObjVC = UIStoryboard.init(name: "Main", bundle:nil).instantiateViewController(withIdentifier: "BGBaseVC") as! BGBaseVC
+                                self?.navigationController?.pushViewController(ObjVC, animated: true)
+                            }
+        })
+        
     }
     
     // MARK:- --->UIResponder function
