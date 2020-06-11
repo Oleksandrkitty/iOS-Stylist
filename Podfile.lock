@@ -36,9 +36,11 @@ DEPENDENCIES:
   - SwiftyJSON (~> 5.0)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - Alamofire
     - AlamofireObjectMapper
+    - CarbonKit
+    - CVCalendar
     - GoogleMaps
     - GooglePlacePicker
     - GooglePlaces
@@ -47,9 +49,6 @@ SPEC REPOS:
     - PKHUD
     - ReachabilitySwift
     - SwiftyJSON
-  trunk:
-    - CarbonKit
-    - CVCalendar
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -67,4 +66,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: deda879c703ed0609ed83b90d57992cff0864f92
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.2
